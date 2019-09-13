@@ -9,6 +9,9 @@ dependencies {
 
   releaseDep 'javax.jmdns:jmdns:3.4.1'
   releaseDep project(path: ':saros.picocontainer', configuration: 'shadow')
+  releaseDep 'org.igniterealtime.smack:smack-tcp:4.3.4'
+  releaseDep 'org.igniterealtime.smack:smack-java7:4.3.4'
+  releaseDep 'org.igniterealtime.smack:smack-extensions:4.3.4'
   releaseDep 'xpp3:xpp3:1.1.4c'
   releaseDep 'com.thoughtworks.xstream:xstream:1.4.10'
   releaseDep 'org.gnu.inet:libidn:1.15'
@@ -21,15 +24,12 @@ dependencies {
   // The used version is a SNAPSHOT version which is not available!
   // TODO: use real release
   releaseDep files('libs/weupnp.jar')
-  // Workaround until we updated to a newer smack version
-  releaseDep files('libs/smack-3.4.1.jar')
-  releaseDep files('libs/smackx-3.4.1.jar')
 
   compile configurations.releaseDep
   testCompile configurations.testConfig
 }
 
-sourceSets.main.java.srcDirs = ['src', 'patches']
+sourceSets.main.java.srcDirs = ['src']
 sourceSets.test.java.srcDir 'test/junit'
 
 jar {
