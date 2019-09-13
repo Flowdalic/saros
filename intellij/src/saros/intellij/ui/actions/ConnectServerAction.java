@@ -20,7 +20,7 @@ public class ConnectServerAction extends AbstractSarosAction {
 
   @Inject private XMPPAccountStore accountStore;
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   public ConnectServerAction(@NotNull Project project) {
     this.project = project;

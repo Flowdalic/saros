@@ -3,11 +3,11 @@ package saros.communication.extensions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("JSRq")
-public class JoinSessionRequestExtension extends SarosPacketExtension {
+public class JoinSessionRequestExtension extends SarosExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
-  public static class Provider extends SarosPacketExtension.Provider<JoinSessionRequestExtension> {
+  public static class Provider extends SarosExtensionElement.Provider<JoinSessionRequestExtension> {
 
     private Provider() {
       super("joinSessionRequest", JoinSessionRequestExtension.class);

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
 import saros.net.xmpp.JID;
@@ -30,7 +30,7 @@ class FakePacketTransmitter implements ITransmitter {
   }
 
   @Override
-  public void sendPacket(Packet packet) throws IOException {
+  public void sendStanza(Stanza packet) throws IOException {
     packet.setFrom(localJID.toString());
 
     JID to = new JID(packet.getTo());
@@ -39,27 +39,27 @@ class FakePacketTransmitter implements ITransmitter {
 
     if (receiver == null) throw new IOException("not connected to " + to);
 
-    receiver.processPacket(packet);
+    receiver.processStanza(packet);
   }
 
   @Override
-  public void send(String connectionID, JID recipient, PacketExtension extension)
+  public void send(String connectionID, JID recipient, ExtensionElement extension)
       throws IOException {
-    sendPacketExtension(recipient, extension);
+    sendExtensionElement(recipient, extension);
   }
 
   @Override
-  public void send(JID recipient, PacketExtension extension) throws IOException {
-    sendPacketExtension(recipient, extension);
+  public void send(JID recipient, ExtensionElement extension) throws IOException {
+    sendExtensionElement(recipient, extension);
   }
 
   @Override
-  public void sendPacketExtension(JID jid, PacketExtension extension) {
+  public void sendExtensionElement(JID jid, ExtensionElement extension) {
     Message message = new Message();
     message.addExtension(extension);
     message.setTo(jid.toString());
     try {
-      sendPacket(message);
+      sendStanza(message);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

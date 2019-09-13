@@ -8,13 +8,13 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.SarosPluginContext;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.internal.XMPPTransmitter;
 import saros.net.xmpp.JID;
 import saros.repackaged.picocontainer.annotations.Inject;
@@ -45,7 +45,7 @@ public class SarosSXETransmitter implements ISXETransmitter {
   /**
    * Interval to poll receiving
    *
-   * @see XMPPTransmitter#receive(SubMonitor, PacketCollector, long, boolean)
+   * @see XMPPTransmitter#receive(SubMonitor, StanzaCollector, long, boolean)
    */
   private static final long SXE_TIMEOUT_INTERVAL = 500L;
 
@@ -68,17 +68,17 @@ public class SarosSXETransmitter implements ISXETransmitter {
     this.sarosSession = sarosSession;
   }
 
-  private PacketListener invitationListener;
+  private StanzaListener invitationListener;
 
-  private PacketListener recordListener;
+  private StanzaListener recordListener;
 
   @Override
   public void installRecordReceiver(final SXEController controller) {
 
     recordListener =
-        new PacketListener() {
+        new StanzaListener() {
           @Override
-          public void processPacket(Packet packet) {
+          public void processStanza(Stanza packet) {
             final SXEExtension extension =
                 (SXEExtension) packet.getExtension(SXEMessage.SXE_TAG, SXEMessage.SXE_XMLNS);
             extension.getMessage().setFrom(packet.getFrom());
@@ -99,8 +99,8 @@ public class SarosSXETransmitter implements ISXETransmitter {
           }
         };
 
-    receiver.addPacketListener(
-        recordListener, provider.getRecordsPacketFilter(controller.getSession()));
+    receiver.addStanzaListener(
+        recordListener, provider.getRecordsStanzaFilter(controller.getSession()));
   }
 
   @Override
@@ -148,11 +148,11 @@ public class SarosSXETransmitter implements ISXETransmitter {
             + " waiting for "
             + Arrays.toString(awaitFor));
 
-    Packet packet;
+    Stanza packet;
 
-    PacketFilter filter = new SXEPacketFilter(msg.getSession(), msg.getTo(), awaitFor);
+    StanzaFilter filter = new SXEStanzaFilter(msg.getSession(), msg.getTo(), awaitFor);
 
-    PacketCollector collector = receiver.createCollector(filter);
+    StanzaCollector collector = receiver.createCollector(filter);
 
     try {
       sendWithoutDispatch(msg);
@@ -186,10 +186,10 @@ public class SarosSXETransmitter implements ISXETransmitter {
   // SXEMessageType... awaitFor) throws IOException,
   // LocalCancellationException {
   //
-  // PacketFilter filter = new SXEPacketFilter(session, peer, awaitFor);
-  // SarosPacketCollector collector = transmitter.installReceiver(filter);
+  // StanzaFilter filter = new SXEStanzaFilter(session, peer, awaitFor);
+  // SarosStanzaCollector collector = transmitter.installReceiver(filter);
   //
-  // Packet packet = transmitter.receive(monitor, collector, SXE_TIMEOUT,
+  // Stanza packet = transmitter.receive(monitor, collector, SXE_TIMEOUT,
   // true);
   //
   // SXEExtension extension =
@@ -205,9 +205,9 @@ public class SarosSXETransmitter implements ISXETransmitter {
   public void enableInvitation(final SXEController controller) {
 
     invitationListener =
-        new PacketListener() {
+        new StanzaListener() {
           @Override
-          public void processPacket(Packet packet) {
+          public void processStanza(Stanza packet) {
             SXEExtension extension =
                 (SXEExtension) packet.getExtension(SXEMessage.SXE_TAG, SXEMessage.SXE_XMLNS);
             extension.getMessage().setFrom(packet.getFrom());
@@ -220,7 +220,7 @@ public class SarosSXETransmitter implements ISXETransmitter {
           }
         };
 
-    receiver.addPacketListener(invitationListener, provider.getInvitationPacketFilter());
+    receiver.addStanzaListener(invitationListener, provider.getInvitationStanzaFilter());
   }
 
   protected void setSender(List<RecordDataObject> rdos, String sender) {
@@ -229,13 +229,13 @@ public class SarosSXETransmitter implements ISXETransmitter {
 
   /** Don's receive anymore records */
   public void disconnect() {
-    receiver.removePacketListener(recordListener);
+    receiver.removeStanzaListener(recordListener);
   }
 
   /** remove the extension provider and invitation */
   public void dispose() {
     disconnect();
-    receiver.removePacketListener(invitationListener);
+    receiver.removeStanzaListener(invitationListener);
     sendingDispatch.shutdown();
   }
 

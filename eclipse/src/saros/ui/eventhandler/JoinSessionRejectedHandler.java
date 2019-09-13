@@ -1,8 +1,8 @@
 package saros.ui.eventhandler;
 
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.JoinSessionRejectedExtension;
 import saros.net.IReceiver;
 import saros.net.util.XMPPUtils;
@@ -16,11 +16,11 @@ public final class JoinSessionRejectedHandler {
 
   private final IReceiver receiver;
 
-  private final PacketListener joinSessionRejectedListener =
-      new PacketListener() {
+  private final StanzaListener joinSessionRejectedListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
           SWTUtils.runSafeSWTAsync(
               LOG,
               new Runnable() {
@@ -37,8 +37,8 @@ public final class JoinSessionRejectedHandler {
 
   public JoinSessionRejectedHandler(IReceiver receiver) {
     this.receiver = receiver;
-    this.receiver.addPacketListener(
-        joinSessionRejectedListener, JoinSessionRejectedExtension.PROVIDER.getPacketFilter());
+    this.receiver.addStanzaListener(
+        joinSessionRejectedListener, JoinSessionRejectedExtension.PROVIDER.getStanzaFilter());
   }
 
   private void handleRejection(JID from, JoinSessionRejectedExtension extension) {

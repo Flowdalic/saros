@@ -163,10 +163,10 @@ public class MUCNegotiationManager {
       return customMUCService;
 
     if (connectionService != null) {
-      Connection connection = connectionService.getConnection();
+      XMPPConnection connection = connectionService.getConnection();
 
       if (connection != null)
-        service = XMPPUtils.getMultiUserChatService(connection, connection.getServiceName());
+        service = XMPPUtils.getMultiUserChatService(connection, connection.getXMPPServiceDomain());
     }
 
     if (service == null) service = customMUCService;

@@ -64,6 +64,6 @@ public class EclipsePluginLifecycle extends AbstractContextLifecycle {
     containerContext
         .getComponent(SarosSessionManager.class)
         .stopSession(SessionEndReason.LOCAL_USER_LEFT);
-    containerContext.getComponent(ConnectionHandler.class).disconnect();
+    containerContext.getComponent(XMPPConnectionHandler.class).disconnect();
   }
 }

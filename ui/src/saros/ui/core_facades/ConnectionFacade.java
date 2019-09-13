@@ -6,9 +6,9 @@ import saros.account.XMPPAccountStore;
 import saros.communication.connection.ConnectionHandler;
 
 /** Bundles backend calls for connecting to and disconnecting from a server. */
-public class ConnectionFacade {
+public class XMPPConnectionFacade {
 
-  private final ConnectionHandler connectionHandler;
+  private final XMPPConnectionHandler connectionHandler;
 
   private final XMPPAccountStore accountStore;
 
@@ -19,7 +19,7 @@ public class ConnectionFacade {
    * @param accountStore
    * @see HTMLUIContextFactory
    */
-  public ConnectionFacade(ConnectionHandler connectionHandler, XMPPAccountStore accountStore) {
+  public XMPPConnectionFacade(XMPPConnectionHandler connectionHandler, XMPPAccountStore accountStore) {
 
     this.connectionHandler = connectionHandler;
     this.accountStore = accountStore;

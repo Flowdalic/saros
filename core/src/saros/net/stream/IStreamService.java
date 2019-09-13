@@ -36,7 +36,7 @@ public interface IStreamService {
    * @param connection
    * @param listener
    */
-  public void initialize(Connection connection, IByteStreamConnectionListener listener);
+  public void initialize(XMPPConnection connection, IByteStreamConnectionListener listener);
 
   /**
    * Un-initializes the service. After un-initialization the service is not able to establish

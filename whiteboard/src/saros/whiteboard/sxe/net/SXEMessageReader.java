@@ -23,7 +23,7 @@ import saros.whiteboard.sxe.records.serializable.SetRecordDataObject;
 /*
  * Does not use static methods:
  *
- * - it is plugged in where applicable (i.e. a Smack Packet Extension)
+ * - it is plugged in where applicable (i.e. a Smack Stanza Extension)
  *
  * - should enable subclassing for customization
  */

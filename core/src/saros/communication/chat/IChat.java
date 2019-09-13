@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import saros.net.xmpp.JID;
 
 /** This interface is used to provide unified access to multiple chat types. */

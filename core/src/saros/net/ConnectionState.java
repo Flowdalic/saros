@@ -21,7 +21,7 @@ public enum ConnectionState {
   NOT_CONNECTED {
     @Override
     public EnumSet<ConnectionState> getAllowedFollowState() {
-      return EnumSet.of(ConnectionState.CONNECTING);
+      return EnumSet.of(XMPPConnectionState.CONNECTING);
     }
   },
 
@@ -35,7 +35,7 @@ public enum ConnectionState {
   CONNECTING {
     @Override
     public EnumSet<ConnectionState> getAllowedFollowState() {
-      return EnumSet.of(ConnectionState.CONNECTED, ConnectionState.ERROR);
+      return EnumSet.of(XMPPConnectionState.CONNECTED, ConnectionState.ERROR);
     }
   },
 
@@ -49,7 +49,7 @@ public enum ConnectionState {
   CONNECTED {
     @Override
     public EnumSet<ConnectionState> getAllowedFollowState() {
-      return EnumSet.of(ConnectionState.DISCONNECTING, ConnectionState.ERROR);
+      return EnumSet.of(XMPPConnectionState.DISCONNECTING, ConnectionState.ERROR);
     }
   },
 
@@ -61,7 +61,7 @@ public enum ConnectionState {
   DISCONNECTING {
     @Override
     public EnumSet<ConnectionState> getAllowedFollowState() {
-      return EnumSet.of(ConnectionState.NOT_CONNECTED);
+      return EnumSet.of(XMPPConnectionState.NOT_CONNECTED);
     }
   },
 
@@ -75,11 +75,11 @@ public enum ConnectionState {
   ERROR() {
     @Override
     public EnumSet<ConnectionState> getAllowedFollowState() {
-      return EnumSet.of(ConnectionState.NOT_CONNECTED, ConnectionState.CONNECTING);
+      return EnumSet.of(XMPPConnectionState.NOT_CONNECTED, ConnectionState.CONNECTING);
     }
   };
 
-  public boolean isValidFollowState(ConnectionState newState) {
+  public boolean isValidFollowState(XMPPConnectionState newState) {
     return this.getAllowedFollowState().contains(newState);
   }
 

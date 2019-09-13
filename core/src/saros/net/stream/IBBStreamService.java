@@ -2,6 +2,8 @@ package saros.net.stream;
 
 import java.io.IOException;
 import org.apache.log4j.Logger;
+import org.jivesoftware.smack.SmackException.NoResponseException;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.bytestreams.BytestreamListener;
@@ -57,8 +59,8 @@ public class IBBStreamService implements IStreamService, BytestreamListener {
     final BytestreamSession session;
 
     try {
-      session = manager.establishSession(remoteAddress.toString(), connectionID);
-    } catch (XMPPException e) {
+      session = manager.establishSession(remoteAddress.toJid(), connectionID);
+    } catch (XMPPException | NoResponseException | NotConnectedException e) {
       throw new IOException(e);
     }
 
@@ -73,7 +75,7 @@ public class IBBStreamService implements IStreamService, BytestreamListener {
 
   @Override
   public synchronized void initialize(
-      Connection connection, IByteStreamConnectionListener listener) {
+      XMPPConnection connection, IByteStreamConnectionListener listener) {
     localAddress = new JID(connection.getUser());
     connectionListener = listener;
     manager = InBandBytestreamManager.getByteStreamManager(connection);

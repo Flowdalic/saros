@@ -12,5 +12,5 @@ public interface IConnectionStateListener {
    * @param error the error that occurred when the state is {@link ConnectionState#ERROR} or <code>
    *     null</code> when the error is not available
    */
-  public void connectionStateChanged(ConnectionState state, Exception error);
+  public void connectionStateChanged(XMPPConnectionState state, Exception error);
 }

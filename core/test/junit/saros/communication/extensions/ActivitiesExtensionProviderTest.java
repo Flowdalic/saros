@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.junit.Test;
 import saros.activities.EditorActivity;
 import saros.activities.IActivity;
@@ -24,10 +24,10 @@ public class ActivitiesExtensionProviderTest {
     activities.add(activity);
     activities.add(activity);
 
-    PacketExtension extension =
+    ExtensionElement extension =
         ActivitiesExtension.PROVIDER.create(new ActivitiesExtension("Session-ID", activities, 0));
 
-    String marshalled = extension.toXML();
+    String marshalled = extension.toXML(String enclosingNamespace);
     assertFalse(marshalled.contains("\r"));
     assertFalse(marshalled.contains("\n"));
     assertFalse(marshalled.contains("\t"));

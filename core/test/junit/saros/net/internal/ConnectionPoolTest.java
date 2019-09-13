@@ -7,13 +7,13 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ConnectionPoolTest {
+public class XMPPConnectionPoolTest {
 
-  private ConnectionPool pool;
+  private XMPPConnectionPool pool;
 
   @Before
   public void setUp() {
-    pool = new ConnectionPool();
+    pool = new XMPPConnectionPool();
   }
 
   @Test

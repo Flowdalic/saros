@@ -5,12 +5,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collections;
 import java.util.List;
 import org.easymock.EasyMock;
-import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
 import org.junit.Before;
 import org.junit.Test;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.session.ISarosSession;
 import saros.session.User;
@@ -22,15 +22,15 @@ public class UserInformationHandlerTest {
   private ITransmitter transmitter;
   private IReceiver receiver;
   private ISarosSession session;
-  private PacketCollector dummyCollector;
+  private StanzaCollector dummyCollector;
 
   @Before
   public void setUp() {
     transmitter = EasyMock.createNiceMock(ITransmitter.class);
     receiver = EasyMock.createNiceMock(IReceiver.class);
-    dummyCollector = EasyMock.createNiceMock(PacketCollector.class);
+    dummyCollector = EasyMock.createNiceMock(StanzaCollector.class);
 
-    EasyMock.expect(receiver.createCollector(EasyMock.isA(PacketFilter.class)))
+    EasyMock.expect(receiver.createCollector(EasyMock.isA(StanzaFilter.class)))
         .andStubReturn(dummyCollector);
     EasyMock.replay(transmitter, receiver, dummyCollector);
   }

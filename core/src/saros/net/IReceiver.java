@@ -1,8 +1,8 @@
 package saros.net;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 
 public interface IReceiver {
 
@@ -24,32 +24,32 @@ public interface IReceiver {
    * @param filter The filter to use when trying to identify packets that should be passed to the
    *     listener. If <code>null</code> all packets are passed to the listener.
    */
-  public void addPacketListener(PacketListener listener, PacketFilter filter);
+  public void addStanzaListener(StanzaListener listener, StanzaFilter filter);
 
   /**
    * Removes the given listener from the list of listeners.
    *
    * @param listener the listener to remove
    */
-  public void removePacketListener(PacketListener listener);
+  public void removeStanzaListener(StanzaListener listener);
 
   /**
    * Dispatches the given packet to all registered packet listeners.
    *
    * @param packet the packet to dispatch
    */
-  public void processPacket(Packet packet);
+  public void processStanza(Stanza packet);
 
   /**
-   * Installs a {@linkplain PacketCollector collector}. Use this method instead of {@link
-   * #addPacketListener} if the logic is using a polling mechanism.
+   * Installs a {@linkplain StanzaCollector collector}. Use this method instead of {@link
+   * #addStanzaListener} if the logic is using a polling mechanism.
    *
    * @param filter a filter that packets must match to be added to the collector.
-   * @return a {@linkplain PacketCollector collector} which <b>must</b> be canceled if it is no
+   * @return a {@linkplain StanzaCollector collector} which <b>must</b> be canceled if it is no
    *     longer used
-   * @see PacketCollector#cancel()
+   * @see StanzaCollector#cancel()
    */
-  public PacketCollector createCollector(PacketFilter filter);
+  public StanzaCollector createCollector(StanzaFilter filter);
 
   public default void addTransferListener(ITransferListener listener) {
     // NOP

@@ -3,8 +3,8 @@ package saros.whiteboard.net;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.whiteboard.sxe.constants.SXEMessageType;
 import saros.whiteboard.sxe.net.SXEMessage;
 import saros.whiteboard.sxe.net.SXESession;
@@ -15,36 +15,36 @@ import saros.whiteboard.sxe.net.SXESession;
  *
  * @author jurke
  */
-public class SXEPacketFilter implements PacketFilter {
+public class SXEStanzaFilter implements StanzaFilter {
 
-  private static final Logger log = Logger.getLogger(SXEPacketFilter.class);
+  private static final Logger log = Logger.getLogger(SXEStanzaFilter.class);
 
   private final List<SXEMessageType> messageTypes;
   private String peer;
   private SXESession session;
 
-  public SXEPacketFilter(SXESession session, String peer, SXEMessageType... messageTypes) {
+  public SXEStanzaFilter(SXESession session, String peer, SXEMessageType... messageTypes) {
     this.peer = peer;
     this.messageTypes = Arrays.asList(messageTypes);
     this.session = session;
   }
 
-  public SXEPacketFilter(SXESession session, SXEMessageType... messageTypes) {
+  public SXEStanzaFilter(SXESession session, SXEMessageType... messageTypes) {
     this.messageTypes = Arrays.asList(messageTypes);
     this.session = session;
   }
 
-  public SXEPacketFilter(String peer, SXEMessageType... messageTypes) {
+  public SXEStanzaFilter(String peer, SXEMessageType... messageTypes) {
     this.peer = peer;
     this.messageTypes = Arrays.asList(messageTypes);
   }
 
-  public SXEPacketFilter(SXEMessageType... messageTypes) {
+  public SXEStanzaFilter(SXEMessageType... messageTypes) {
     this.messageTypes = Arrays.asList(messageTypes);
   }
 
   @Override
-  public boolean accept(Packet packet) {
+  public boolean accept(Stanza packet) {
     try {
 
       SXEExtension extension =
@@ -85,7 +85,7 @@ public class SXEPacketFilter implements PacketFilter {
 
   @Override
   public String toString() {
-    return "SXEPacketFilter: filer"
+    return "SXEStanzaFilter: filer"
         + (peer != null ? " peer=" + peer : "")
         + (session != null ? " session=" + session.getSessionId() : "")
         + (!messageTypes.isEmpty() ? " types=" + messageTypes.toString() : "");

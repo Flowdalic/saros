@@ -19,8 +19,8 @@
 package saros.net;
 
 import java.io.IOException;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.annotations.Component;
 import saros.net.xmpp.JID;
 
@@ -46,24 +46,24 @@ public interface ITransmitter {
    * @param packet the packet to send
    * @throws IOException if an I/O error occurs or no connection is established to a XMPP server
    */
-  public void sendPacket(Packet packet) throws IOException;
+  public void sendStanza(Stanza packet) throws IOException;
 
   /**
-   * Sends the given {@link PacketExtension} to the given {@link JID} over the currently established
+   * Sends the given {@link ExtensionElement} to the given {@link JID} over the currently established
    * XMPP connection. There is <b>no</b> guarantee that this message (extension) will arrive at the
    * recipients side !
    *
    * @param jid the recipient of the extension
    * @param extension the extension to send
    */
-  public void sendPacketExtension(JID jid, PacketExtension extension);
+  public void sendExtensionElement(JID jid, ExtensionElement extension);
 
-  /** @deprecated use {@link #send(String, JID, PacketExtension)} */
+  /** @deprecated use {@link #send(String, JID, ExtensionElement)} */
   @Deprecated
-  public void send(JID recipient, PacketExtension extension) throws IOException;
+  public void send(JID recipient, ExtensionElement extension) throws IOException;
 
   /**
-   * Sends the given {@link PacketExtension} to the given {@link JID} using a direct stream
+   * Sends the given {@link ExtensionElement} to the given {@link JID} using a direct stream
    * connection. The connection must be already established to the recipient with the given id.
    *
    * @param connectionID the id of the connection
@@ -71,7 +71,7 @@ public interface ITransmitter {
    * @param extension the extension to send
    * @throws IOException if an I/O error occurs
    */
-  public void send(String connectionID, JID recipient, PacketExtension extension)
+  public void send(String connectionID, JID recipient, ExtensionElement extension)
       throws IOException;
 
   public default void addTransferListener(ITransferListener listener) {

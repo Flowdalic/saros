@@ -39,7 +39,7 @@ public class RenameContactAction extends Action {
   protected IConnectionListener connectionListener =
       new IConnectionListener() {
         @Override
-        public void connectionStateChanged(Connection connection, final ConnectionState newState) {
+        public void connectionStateChanged(XMPPConnection connection, final ConnectionState newState) {
           updateEnablement();
         }
       };

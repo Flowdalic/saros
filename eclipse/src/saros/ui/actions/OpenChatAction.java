@@ -52,7 +52,7 @@ public class OpenChatAction extends Action implements Disposable {
 
   @Override
   public void run() {
-    Connection connection = connectionService.getConnection();
+    XMPPConnection connection = connectionService.getConnection();
     if (connection == null) return;
 
     String localUser = connection.getUser();
@@ -75,7 +75,7 @@ public class OpenChatAction extends Action implements Disposable {
   }
 
   private void updateEnablement() {
-    Connection connection = connectionService.getConnection();
+    XMPPConnection connection = connectionService.getConnection();
     if (connection == null) {
       setEnabled(false);
       return;

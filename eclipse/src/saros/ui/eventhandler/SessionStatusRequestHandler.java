@@ -3,8 +3,8 @@ package saros.ui.eventhandler;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.SessionStatusRequestExtension;
 import saros.communication.extensions.SessionStatusResponseExtension;
 import saros.filesystem.IProject;
@@ -28,11 +28,11 @@ public final class SessionStatusRequestHandler {
 
   private final IPreferenceStore preferenceStore;
 
-  private final PacketListener statusRequestListener =
-      new PacketListener() {
+  private final StanzaListener statusRequestListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
           SWTUtils.runSafeSWTAsync(
               LOG,
               new Runnable() {
@@ -56,8 +56,8 @@ public final class SessionStatusRequestHandler {
     this.preferenceStore = preferenceStore;
 
     if (Boolean.getBoolean("saros.server.SUPPORTED")) {
-      this.receiver.addPacketListener(
-          statusRequestListener, SessionStatusRequestExtension.PROVIDER.getPacketFilter());
+      this.receiver.addStanzaListener(
+          statusRequestListener, SessionStatusRequestExtension.PROVIDER.getStanzaFilter());
     }
   }
 
@@ -76,7 +76,7 @@ public final class SessionStatusRequestHandler {
       response = new SessionStatusResponseExtension(participants, getSessionDescription(session));
     }
 
-    transmitter.sendPacketExtension(from, SessionStatusResponseExtension.PROVIDER.create(response));
+    transmitter.sendExtensionElement(from, SessionStatusResponseExtension.PROVIDER.create(response));
   }
 
   private String getSessionDescription(ISarosSession session) {

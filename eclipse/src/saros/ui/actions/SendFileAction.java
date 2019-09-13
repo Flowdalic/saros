@@ -100,7 +100,7 @@ public class SendFileAction extends Action implements Disposable {
       new IConnectionListener() {
         @Override
         public void connectionStateChanged(
-            final Connection connection, final ConnectionState state) {
+            final XMPPConnection connection, final ConnectionState state) {
           SWTUtils.runSafeSWTAsync(
               LOG,
               new Runnable() {
@@ -131,7 +131,7 @@ public class SendFileAction extends Action implements Disposable {
 
   private FileTransferManager fileTransferManager;
 
-  private Connection connection;
+  private XMPPConnection connection;
 
   public SendFileAction() {
     super(Messages.SendFileAction_title);
@@ -219,14 +219,14 @@ public class SendFileAction extends Action implements Disposable {
     // workaround
     if (connection == null) return null;
 
-    Presence presence = connection.getRoster().getPresence(contacts.get(0).getBase());
+    Presence presence = Roster.getInstanceFor(connection).getPresence(contacts.get(0).getBase());
 
     if (!presence.isAvailable() || presence.getFrom() == null) return null;
 
     return new JID(presence.getFrom());
   }
 
-  private void updateFileTransferManager(Connection connection) {
+  private void updateFileTransferManager(XMPPConnection connection) {
     if (connection == null) {
       if (fileTransferManager != null)
         fileTransferManager.removeFileTransferListener(fileTransferListener);
@@ -243,7 +243,7 @@ public class SendFileAction extends Action implements Disposable {
   private boolean isOnline(JID jid) {
     if (connection == null) return false;
 
-    return connection.getRoster().getPresenceResource(jid.getRAW()).isAvailable();
+    return Roster.getInstanceFor(connection).getPresenceResource(jid.getRAW()).isAvailable();
   }
 
   // TODO popping up dialogs can create a very bad UX but we have currently no

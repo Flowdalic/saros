@@ -47,7 +47,7 @@ public class StateRenderer extends Renderer {
     connectionService.addListener(
         new IConnectionListener() {
           @Override
-          public void connectionStateChanged(Connection connection, ConnectionState newState) {
+          public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
 
             ConnectionState sanitizedState = newState;
             if (sanitizedState == ConnectionState.ERROR) {

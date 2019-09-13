@@ -73,7 +73,7 @@ public class JIDFileAppender extends FileAppender {
       new IConnectionListener() {
 
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState newState) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
 
           if (newState == ConnectionState.CONNECTED) {
             setJID(new JID(connection.getUser()));

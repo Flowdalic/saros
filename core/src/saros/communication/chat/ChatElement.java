@@ -2,7 +2,7 @@ package saros.communication.chat;
 
 import java.util.Date;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import saros.net.xmpp.JID;
 
 /** Chat element class representing entries in the {@link ChatHistory}. */

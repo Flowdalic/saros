@@ -7,7 +7,7 @@ import saros.misc.xstream.JIDConverter;
 import saros.net.xmpp.JID;
 
 @XStreamAlias(/* ProjectNegotiationCompleted */ "PNCMP")
-public class UserFinishedProjectNegotiationExtension extends SarosSessionPacketExtension {
+public class UserFinishedProjectNegotiationExtension extends SarosSessionExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -25,7 +25,7 @@ public class UserFinishedProjectNegotiationExtension extends SarosSessionPacketE
   }
 
   public static class Provider
-      extends SarosSessionPacketExtension.Provider<UserFinishedProjectNegotiationExtension> {
+      extends SarosSessionExtensionElement.Provider<UserFinishedProjectNegotiationExtension> {
 
     private Provider() {
       super("pncmp", UserFinishedProjectNegotiationExtension.class);

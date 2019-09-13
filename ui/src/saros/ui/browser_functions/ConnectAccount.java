@@ -10,7 +10,7 @@ public class ConnectAccount extends TypedJavascriptFunction {
 
   public static final String JS_NAME = "connect";
 
-  private final ConnectionFacade connectionFacade;
+  private final XMPPConnectionFacade connectionFacade;
 
   /**
    * Created by PicoContainer
@@ -18,7 +18,7 @@ public class ConnectAccount extends TypedJavascriptFunction {
    * @param connectionFacade
    * @see HTMLUIContextFactory
    */
-  public ConnectAccount(ConnectionFacade connectionFacade) {
+  public ConnectAccount(XMPPConnectionFacade connectionFacade) {
     super(JS_NAME);
     this.connectionFacade = connectionFacade;
   }

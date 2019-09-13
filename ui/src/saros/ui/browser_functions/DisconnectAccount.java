@@ -9,7 +9,7 @@ public class DisconnectAccount extends TypedJavascriptFunction {
 
   public static final String JS_NAME = "disconnect";
 
-  private final ConnectionFacade connectionFacade;
+  private final XMPPConnectionFacade connectionFacade;
 
   /**
    * Created by PicoContainer
@@ -17,7 +17,7 @@ public class DisconnectAccount extends TypedJavascriptFunction {
    * @param connectionFacade
    * @see HTMLUIContextFactory
    */
-  public DisconnectAccount(ConnectionFacade connectionFacade) {
+  public DisconnectAccount(XMPPConnectionFacade connectionFacade) {
     super(JS_NAME);
     this.connectionFacade = connectionFacade;
   }

@@ -22,7 +22,7 @@ public class XMPPConnectionSupport {
 
   private final ISarosSessionManager sessionManager;
 
-  private final ConnectionHandler connectionHandler;
+  private final XMPPConnectionHandler connectionHandler;
 
   public static XMPPConnectionSupport getInstance() {
     return instance;
@@ -35,7 +35,7 @@ public class XMPPConnectionSupport {
 
   public XMPPConnectionSupport(
       final XMPPAccountStore store,
-      final ConnectionHandler connectionHandler,
+      final XMPPConnectionHandler connectionHandler,
       final ISarosSessionManager sessionManager) {
     this.store = store;
     this.connectionHandler = connectionHandler;

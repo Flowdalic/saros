@@ -40,7 +40,7 @@ public class ServerLifecycle extends AbstractContextLifecycle {
   protected void finalizeContext(final ContainerContext context) {
     context.getComponent(ISarosSessionManager.class).stopSession(SessionEndReason.LOCAL_USER_LEFT);
 
-    context.getComponent(ConnectionHandler.class).disconnect();
+    context.getComponent(XMPPConnectionHandler.class).disconnect();
   }
 
   /*
@@ -61,7 +61,7 @@ public class ServerLifecycle extends AbstractContextLifecycle {
     }
 
     /*
-     * TODO we do not need a JID store, add a method the ConnectionHandler
+     * TODO we do not need a JID store, add a method the XMPPConnectionHandler
      * instead
      */
     XMPPAccountStore store = context.getComponent(XMPPAccountStore.class);
@@ -73,7 +73,7 @@ public class ServerLifecycle extends AbstractContextLifecycle {
     XMPPAccount account =
         store.createAccount(jid.getName(), password, jid.getDomain(), "", 0, true, true);
 
-    ConnectionHandler connectionHandler = context.getComponent(ConnectionHandler.class);
+    XMPPConnectionHandler connectionHandler = context.getComponent(XMPPConnectionHandler.class);
     connectionHandler.connect(account, false);
   }
 }

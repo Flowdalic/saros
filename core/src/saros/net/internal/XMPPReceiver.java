@@ -12,12 +12,14 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
+import org.jivesoftware.smack.SmackException.NotLoggedInException;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smack.provider.PacketExtensionProvider;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -27,8 +29,8 @@ import saros.net.DispatchThreadContext;
 import saros.net.IPacketInterceptor;
 import saros.net.IReceiver;
 import saros.net.ITransferListener;
-import saros.net.PacketCollector;
-import saros.net.PacketCollector.CancelHook;
+import saros.net.StanzaCollector;
+import saros.net.StanzaCollector.CancelHook;
 import saros.net.stream.StreamMode;
 import saros.net.xmpp.IConnectionListener;
 import saros.net.xmpp.XMPPConnectionService;
@@ -42,8 +44,8 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
 
   private final DispatchThreadContext dispatchThreadContext;
 
-  private final Map<PacketListener, PacketFilter> listeners =
-      Collections.synchronizedMap(new HashMap<PacketListener, PacketFilter>());
+  private final Map<StanzaListener, StanzaFilter> listeners =
+      Collections.synchronizedMap(new HashMap<StanzaListener, StanzaFilter>());
 
   private final CopyOnWriteArrayList<ITransferListener> transferListeners =
       new CopyOnWriteArrayList<>();
@@ -53,12 +55,12 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
 
   private XmlPullParser parser;
 
-  private final PacketListener smackPacketListener =
-      new PacketListener() {
+  private final StanzaListener smackStanzaListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(Packet packet) {
-          XMPPReceiver.this.processPacket(packet);
+        public void processStanza(Stanza packet) {
+          XMPPReceiver.this.processStanza(packet);
         }
       };
 
@@ -66,16 +68,16 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
       new IConnectionListener() {
 
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState state) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState state) {
 
           switch (state) {
             case CONNECTING:
-              connection.addPacketListener(smackPacketListener, null);
+              connection.addSyncStanzaListener(smackStanzaListener, null);
               // $FALL-THROUGH$
             case CONNECTED:
               break;
             default:
-              if (connection != null) connection.removePacketListener(smackPacketListener);
+              if (connection != null) connection.removeSyncStanzaListener(smackStanzaListener);
           }
         }
       };
@@ -102,12 +104,12 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
   }
 
   @Override
-  public void addPacketListener(PacketListener listener, PacketFilter filter) {
+  public void addStanzaListener(StanzaListener listener, StanzaFilter filter) {
     listeners.put(listener, filter);
   }
 
   @Override
-  public void removePacketListener(PacketListener listener) {
+  public void removeStanzaListener(StanzaListener listener) {
     listeners.remove(listener);
   }
 
@@ -132,7 +134,7 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
   }
 
   @Override
-  public void processPacket(final Packet packet) {
+  public void processStanza(final Stanza packet) {
     dispatchThreadContext.executeAsDispatch(
         new Runnable() {
           @Override
@@ -143,17 +145,17 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
   }
 
   @Override
-  public PacketCollector createCollector(PacketFilter filter) {
-    final PacketCollector collector =
-        new PacketCollector(
+  public StanzaCollector createCollector(StanzaFilter filter) {
+    final StanzaCollector collector =
+        new StanzaCollector(
             new CancelHook() {
               @Override
-              public void cancelPacketCollector(PacketCollector collector) {
-                removePacketListener(collector);
+              public void cancelStanzaCollector(StanzaCollector collector) {
+                removeStanzaListener(collector);
               }
             },
             filter);
-    addPacketListener(collector, filter);
+    addStanzaListener(collector, filter);
 
     return collector;
   }
@@ -166,7 +168,7 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
           @Override
           public void run() {
 
-            Packet packet = convertBinaryXMPPExtension(extension);
+            Stanza packet = convertBinaryXMPPExtension(extension);
 
             if (packet != null) forwardPacket(packet);
           }
@@ -178,30 +180,35 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
    *
    * @sarosThread must be called from the Dispatch Thread
    */
-  private void forwardPacket(Packet packet) {
-    Map<PacketListener, PacketFilter> copy;
+  private void forwardPacket(Stanza packet) {
+    Map<StanzaListener, StanzaFilter> copy;
 
     synchronized (listeners) {
-      copy = new HashMap<PacketListener, PacketFilter>(listeners);
+      copy = new HashMap<StanzaListener, StanzaFilter>(listeners);
     }
-    for (Entry<PacketListener, PacketFilter> entry : copy.entrySet()) {
-      PacketListener listener = entry.getKey();
-      PacketFilter filter = entry.getValue();
+    for (Entry<StanzaListener, StanzaFilter> entry : copy.entrySet()) {
+      StanzaListener listener = entry.getKey();
+      StanzaFilter filter = entry.getValue();
 
       if (filter == null || filter.accept(packet)) {
-        listener.processPacket(packet);
+        try {
+            listener.processStanza(packet);
+        } catch (NotConnectedException | NotLoggedInException
+            | InterruptedException e) {
+            log.debug("processStanza() threw exception", e);
+        }
       }
     }
   }
 
   /**
    * Deserializes the payload of an {@link BinaryXMPPExtension} back to its original {@link
-   * PacketExtension} and returns a new packet containing the deserialized packet extension.
+   * ExtensionElement} and returns a new packet containing the deserialized packet extension.
    *
    * <p>This method is <b>not</b> thread safe and <b>must not</b> accessed by multiple threads
    * concurrently.
    */
-  private Packet convertBinaryXMPPExtension(BinaryXMPPExtension extension) {
+  private Stanza convertBinaryXMPPExtension(BinaryXMPPExtension extension) {
 
     boolean dispatchPacket = true;
 
@@ -248,8 +255,8 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
     String namespace = description.getNamespace();
     // IQ provider?
 
-    PacketExtensionProvider provider =
-        (PacketExtensionProvider)
+    ExtensionElementProvider provider =
+        (ExtensionElementProvider)
             ProviderManager.getInstance().getExtensionProvider(name, namespace);
 
     if (provider == null) {
@@ -262,7 +269,7 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
       return null;
     }
 
-    PacketExtension packetExtension = null;
+    ExtensionElement packetExtension = null;
 
     try {
       parser.setInput(new ByteArrayInputStream(extension.getPayload()), "UTF-8");
@@ -280,8 +287,8 @@ public class XMPPReceiver implements IReceiver, IBinaryXMPPExtensionReceiver {
       return null;
     }
 
-    Packet packet = new Message();
-    packet.setPacketID(Packet.ID_NOT_AVAILABLE);
+    Stanza packet = new Message();
+    packet.setStanzaId(Stanza.ID_NOT_AVAILABLE);
     packet.setFrom(description.getSender().toString());
     packet.setTo(description.getRecipient().toString());
     packet.addExtension(packetExtension);

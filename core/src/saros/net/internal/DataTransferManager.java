@@ -46,7 +46,7 @@ public class DataTransferManager implements IConnectionListener, IConnectionMana
 
   private volatile JID currentLocalJID;
 
-  private Connection xmppConnection;
+  private XMPPConnection xmppConnection;
 
   private int serviceMask = -1;
 
@@ -56,7 +56,7 @@ public class DataTransferManager implements IConnectionListener, IConnectionMana
 
   private final Lock connectLock = new ReentrantLock();
 
-  private final ConnectionPool connectionPool = new ConnectionPool();
+  private final XMPPConnectionPool connectionPool = new ConnectionPool();
 
   private final Set<String> currentOutgoingConnectionEstablishments = new HashSet<String>();
 
@@ -338,7 +338,7 @@ public class DataTransferManager implements IConnectionListener, IConnectionMana
   }
 
   /** Sets up the stream services for the given XMPPConnection */
-  private void prepareConnection(final Connection connection) {
+  private void prepareConnection(final XMPPConnection connection) {
     assert xmppConnection == null;
 
     xmppConnection = connection;
@@ -373,7 +373,7 @@ public class DataTransferManager implements IConnectionListener, IConnectionMana
   }
 
   @Override
-  public void connectionStateChanged(Connection connection, ConnectionState newState) {
+  public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
     if (newState == ConnectionState.CONNECTED) prepareConnection(connection);
     else if (this.xmppConnection != null) disposeConnection();
   }

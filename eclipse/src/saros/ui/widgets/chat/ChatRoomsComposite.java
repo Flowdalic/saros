@@ -95,7 +95,7 @@ public class ChatRoomsComposite extends ListExplanatoryComposite {
 
   protected Object mucCreationLock = new Object();
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   @Inject protected EditorManager editorManager;
 
@@ -175,7 +175,7 @@ public class ChatRoomsComposite extends ListExplanatoryComposite {
       new IConnectionStateListener() {
 
         @Override
-        public void connectionStateChanged(ConnectionState state, Exception error) {
+        public void connectionStateChanged(XMPPConnectionState state, Exception error) {
           SWTUtils.runSafeSWTAsync(
               log,
               new Runnable() {

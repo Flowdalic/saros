@@ -12,7 +12,7 @@ import saros.repackaged.picocontainer.annotations.Inject;
  */
 public class SarosPropertyTester extends PropertyTester {
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   public SarosPropertyTester() {
     SarosPluginContext.initComponent(this);

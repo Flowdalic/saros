@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   BinaryChannelConnectionTest.class,
-  ConnectionPoolTest.class,
+  XMPPConnectionPoolTest.class,
   DataTransferManagerTest.class
 })
 public class TestSuite {

@@ -3,22 +3,22 @@ package saros.net;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 
 /**
  * This packet collector is a special version of SMACKs {@link
- * org.jivesoftware.smack.PacketCollector} and does not depend on a {@link
+ * org.jivesoftware.smack.StanzaCollector} and does not depend on a {@link
  * org.jivesoftware.smack.XMPPConnection} for registration.
  */
-public class PacketCollector implements PacketListener {
+public class StanzaCollector implements StanzaListener {
 
   public static interface CancelHook {
-    public void cancelPacketCollector(PacketCollector collector);
+    public void cancelStanzaCollector(StanzaCollector collector);
   }
 
-  private static final Logger log = Logger.getLogger(PacketCollector.class);
+  private static final Logger log = Logger.getLogger(StanzaCollector.class);
   private boolean hasReveived = false;
 
   /**
@@ -27,7 +27,7 @@ public class PacketCollector implements PacketListener {
    */
   public static final int MAX_PACKETS = 65536;
 
-  private PacketFilter packetFilter;
+  private StanzaFilter packetFilter;
   private LinkedBlockingQueue<Packet> resultQueue = new LinkedBlockingQueue<Packet>(MAX_PACKETS);
   private CancelHook cancelHook;
   /** Once canceled is true, it can never become false again. */
@@ -39,7 +39,7 @@ public class PacketCollector implements PacketListener {
    *
    * @param packetFilter determines which packets will be returned by this collector.
    */
-  public PacketCollector(CancelHook cancelHook, PacketFilter packetFilter) {
+  public StanzaCollector(CancelHook cancelHook, StanzaFilter packetFilter) {
     this.cancelHook = cancelHook;
     this.packetFilter = packetFilter;
   }
@@ -53,7 +53,7 @@ public class PacketCollector implements PacketListener {
     // If the packet collector has already been canceled, do nothing.
     if (!canceled) {
       canceled = true;
-      if (cancelHook != null) cancelHook.cancelPacketCollector(this);
+      if (cancelHook != null) cancelHook.cancelStanzaCollector(this);
     }
   }
 
@@ -63,7 +63,7 @@ public class PacketCollector implements PacketListener {
    *
    * @return the packet filter.
    */
-  public PacketFilter getPacketFilter() {
+  public StanzaFilter getStanzaFilter() {
     return packetFilter;
   }
 
@@ -76,7 +76,7 @@ public class PacketCollector implements PacketListener {
    * @throws IllegalStateException if this collector is canceled
    * @return the next available packet.
    */
-  public Packet nextResult(long timeout) {
+  public Stanza nextResult(long timeout) {
     if (canceled && resultQueue.isEmpty())
       throw new IllegalStateException("Canceled packet collector");
     try {
@@ -104,7 +104,7 @@ public class PacketCollector implements PacketListener {
    *     saros.net.DispatchThreadContext}
    */
   @Override
-  public void processPacket(Packet packet) {
+  public void processStanza(Stanza packet) {
     if (packet == null) return;
 
     if (packetFilter == null || packetFilter.accept(packet)) {

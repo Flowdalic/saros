@@ -3,10 +3,10 @@ package saros.communication.extensions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 
-public abstract class ProjectNegotiationExtension extends SarosSessionPacketExtension {
+public abstract class ProjectNegotiationExtension extends SarosSessionExtensionElement {
 
   @XStreamAlias("nid")
   @XStreamAsAttribute
@@ -22,7 +22,7 @@ public abstract class ProjectNegotiationExtension extends SarosSessionPacketExte
   }
 
   public abstract static class Provider<T extends ProjectNegotiationExtension>
-      extends SarosSessionPacketExtension.Provider<T> {
+      extends SarosSessionExtensionElement.Provider<T> {
 
     public Provider(String elementName, Class<?>... classes) {
       super(elementName, classes);
@@ -34,13 +34,13 @@ public abstract class ProjectNegotiationExtension extends SarosSessionPacketExte
      * <p>It might be necessary to extends the packet filter so here is the basic example how to
      * extend it properly.
      */
-    public PacketFilter getPacketFilter(final String sessionID, final String negotiationID) {
+    public StanzaFilter getStanzaFilter(final String sessionID, final String negotiationID) {
 
       return new AndFilter(
-          super.getPacketFilter(sessionID),
-          new PacketFilter() {
+          super.getStanzaFilter(sessionID),
+          new StanzaFilter() {
             @Override
-            public boolean accept(Packet packet) {
+            public boolean accept(Stanza packet) {
               ProjectNegotiationExtension extension = getPayload(packet);
 
               if (extension == null) return false;

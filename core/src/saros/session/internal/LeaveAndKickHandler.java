@@ -1,8 +1,8 @@
 package saros.session.internal;
 
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.KickUserExtension;
 import saros.communication.extensions.LeaveSessionExtension;
 import saros.net.IReceiver;
@@ -26,18 +26,18 @@ public class LeaveAndKickHandler implements Startable {
   private final ISarosSessionManager sessionManager;
   private final IReceiver receiver;
 
-  private final PacketListener leaveExtensionListener =
-      new PacketListener() {
+  private final StanzaListener leaveExtensionListener =
+      new StanzaListener() {
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           leaveReceived(new JID(packet.getFrom()));
         }
       };
 
-  private final PacketListener kickExtensionListener =
-      new PacketListener() {
+  private final StanzaListener kickExtensionListener =
+      new StanzaListener() {
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           kickReceived(new JID(packet.getFrom()));
         }
       };
@@ -58,17 +58,17 @@ public class LeaveAndKickHandler implements Startable {
 
   @Override
   public void start() {
-    receiver.addPacketListener(
-        leaveExtensionListener, LeaveSessionExtension.PROVIDER.getPacketFilter(session.getID()));
+    receiver.addStanzaListener(
+        leaveExtensionListener, LeaveSessionExtension.PROVIDER.getStanzaFilter(session.getID()));
 
-    receiver.addPacketListener(
-        kickExtensionListener, KickUserExtension.PROVIDER.getPacketFilter(session.getID()));
+    receiver.addStanzaListener(
+        kickExtensionListener, KickUserExtension.PROVIDER.getStanzaFilter(session.getID()));
   }
 
   @Override
   public void stop() {
-    receiver.removePacketListener(leaveExtensionListener);
-    receiver.removePacketListener(kickExtensionListener);
+    receiver.removeStanzaListener(leaveExtensionListener);
+    receiver.removeStanzaListener(kickExtensionListener);
   }
 
   private void kickReceived(JID from) {

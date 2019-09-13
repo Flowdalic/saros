@@ -27,5 +27,5 @@ public interface IPacketInterceptor {
    * @return <code>true</code> if the packet should be send, <code>false</code> if the packet should
    *     be dropped
    */
-  public boolean sendPacket(String connectID, TransferDescription description, byte[] payload);
+  public boolean sendStanza(String connectID, TransferDescription description, byte[] payload);
 }

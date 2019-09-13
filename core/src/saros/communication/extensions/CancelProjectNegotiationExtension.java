@@ -22,7 +22,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * class fields.
  */
 @XStreamAlias(/* ProjectNegotiationCancel */ "PNCL")
-public class CancelProjectNegotiationExtension extends SarosSessionPacketExtension {
+public class CancelProjectNegotiationExtension extends SarosSessionExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -86,7 +86,7 @@ public class CancelProjectNegotiationExtension extends SarosSessionPacketExtensi
    */
 
   public static class Provider
-      extends SarosSessionPacketExtension.Provider<CancelProjectNegotiationExtension> {
+      extends SarosSessionExtensionElement.Provider<CancelProjectNegotiationExtension> {
     private Provider() {
       super("pncl", CancelProjectNegotiationExtension.class);
     }

@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.JoinSessionRejectedExtension;
 import saros.communication.extensions.JoinSessionRequestExtension;
 import saros.net.IReceiver;
@@ -31,11 +31,11 @@ public final class JoinSessionRequestHandler {
 
   private final IPreferenceStore preferenceStore;
 
-  private final PacketListener joinSessionRequestListener =
-      new PacketListener() {
+  private final StanzaListener joinSessionRequestListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
           SWTUtils.runSafeSWTAsync(
               LOG,
               new Runnable() {
@@ -61,8 +61,8 @@ public final class JoinSessionRequestHandler {
     this.preferenceStore = preferenceStore;
 
     if (Boolean.getBoolean("saros.server.SUPPORTED")) {
-      this.receiver.addPacketListener(
-          joinSessionRequestListener, JoinSessionRequestExtension.PROVIDER.getPacketFilter());
+      this.receiver.addStanzaListener(
+          joinSessionRequestListener, JoinSessionRequestExtension.PROVIDER.getStanzaFilter());
     }
   }
 
@@ -92,7 +92,7 @@ public final class JoinSessionRequestHandler {
   }
 
   private void sendRejection(JID to) {
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         to, JoinSessionRejectedExtension.PROVIDER.create(new JoinSessionRejectedExtension()));
   }
 }

@@ -2,7 +2,7 @@ package saros.ui.eventhandler;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import saros.SarosConstants;
 import saros.net.ConnectionState;
 import saros.net.xmpp.IConnectionListener;
@@ -17,12 +17,12 @@ public class ServerPreferenceHandler {
       new IConnectionListener() {
 
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState newState) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
 
           // Adding the feature while state is CONNECTING would be much
           // better, yet it's not possible since the ServiceDiscoveryManager
           // is not available at that point
-          if (ConnectionState.CONNECTED.equals(newState)) {
+          if (XMPPConnectionState.CONNECTED.equals(newState)) {
             if (Boolean.getBoolean("saros.server.SUPPORTED")) {
               if (preferenceStore.getBoolean(EclipsePreferenceConstants.SERVER_ACTIVATED)) {
                 addServerFeature(connection);
@@ -41,7 +41,7 @@ public class ServerPreferenceHandler {
     connectionService.addListener(connectionListener);
   }
 
-  private void addServerFeature(Connection connection) {
+  private void addServerFeature(XMPPConnection connection) {
     if (connection == null) return;
 
     ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(connection);
@@ -51,7 +51,7 @@ public class ServerPreferenceHandler {
     discoveryManager.addFeature(SarosConstants.NAMESPACE_SERVER);
   }
 
-  private void removeServerFeature(Connection connection) {
+  private void removeServerFeature(XMPPConnection connection) {
     if (connection == null) return;
 
     ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(connection);

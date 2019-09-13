@@ -2,8 +2,8 @@ package saros.session.internal.timeout;
 
 import java.io.IOException;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.PingExtension;
 import saros.communication.extensions.PongExtension;
 import saros.net.IReceiver;
@@ -30,11 +30,11 @@ public final class ClientSessionTimeoutHandler extends SessionTimeoutHandler {
 
   private Thread workerThread;
 
-  private final PacketListener pingPacketListener =
-      new PacketListener() {
+  private final StanzaListener pingStanzaListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           synchronized (ClientSessionTimeoutHandler.this) {
             lastPingReceived = System.currentTimeMillis();
             pingReceived = true;
@@ -111,8 +111,8 @@ public final class ClientSessionTimeoutHandler extends SessionTimeoutHandler {
 
     lastPingReceived = System.currentTimeMillis();
 
-    receiver.addPacketListener(
-        pingPacketListener, PingExtension.PROVIDER.getPacketFilter(currentSessionID));
+    receiver.addStanzaListener(
+        pingStanzaListener, PingExtension.PROVIDER.getStanzaFilter(currentSessionID));
 
     workerThread =
         ThreadUtils.runSafeAsync("client-network-watchdog", LOG, clientSessionTimeoutWatchdog);
@@ -122,7 +122,7 @@ public final class ClientSessionTimeoutHandler extends SessionTimeoutHandler {
   public void stop() {
     super.stop();
 
-    receiver.removePacketListener(pingPacketListener);
+    receiver.removeStanzaListener(pingStanzaListener);
 
     synchronized (this) {
       shutdown = true;

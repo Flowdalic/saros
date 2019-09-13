@@ -1,6 +1,6 @@
 package saros.communication.chat;
 
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import saros.net.xmpp.JID;
 
 /** A listener for {@link IChat} chat-related events. */

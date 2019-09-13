@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import saros.SarosPluginContext;
 import saros.communication.chat.ChatElement;
 import saros.communication.chat.ChatElement.ChatElementType;

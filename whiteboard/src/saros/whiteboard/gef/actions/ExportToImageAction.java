@@ -142,9 +142,9 @@ public class ExportToImageAction extends WorkbenchPartAction {
 
   private static void paintChildren(Graphics g, IFigure figure) {
     for (Object child : figure.getChildren()) {
-      // ConnectionLayer does not contain children -> paint directly
+      // XMPPConnectionLayer does not contain children -> paint directly
       // else paint Children
-      if (child instanceof FreeformLayer && !(child instanceof ConnectionLayer)) {
+      if (child instanceof FreeformLayer && !(child instanceof XMPPConnectionLayer)) {
         paintChildren(g, (IFigure) child);
       } else {
         ((IFigure) child).paint(g);

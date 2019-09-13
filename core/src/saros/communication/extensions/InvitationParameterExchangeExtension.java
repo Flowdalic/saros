@@ -25,7 +25,7 @@ import java.util.Map;
 import saros.negotiation.hooks.ISessionNegotiationHook;
 import saros.net.xmpp.JID;
 
-/** Packet used for exchanging data during session negotiation. Can be used on both sides. */
+/** Stanza used for exchanging data during session negotiation. Can be used on both sides. */
 @XStreamAlias(/* SessionNegotiationParameterExchange */ "SNPE")
 public class InvitationParameterExchangeExtension extends InvitationExtension {
 

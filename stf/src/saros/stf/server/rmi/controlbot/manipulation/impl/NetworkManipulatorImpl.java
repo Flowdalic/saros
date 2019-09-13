@@ -127,7 +127,7 @@ public final class NetworkManipulatorImpl extends StfRemoteObject
         }
 
         @Override
-        public boolean sendPacket(
+        public boolean sendStanza(
             final String connectionID,
             final TransferDescription description,
             final byte[] payload) {

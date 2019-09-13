@@ -2,7 +2,7 @@ package saros.communication.chat;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import saros.net.xmpp.JID;
 
 /**

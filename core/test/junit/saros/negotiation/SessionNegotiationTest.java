@@ -13,8 +13,8 @@ import static org.junit.Assert.fail;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import saros.negotiation.Negotiation.Status;
 import saros.negotiation.hooks.SessionNegotiationHookManager;
 import saros.net.IConnectionManager;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.net.xmpp.discovery.DiscoveryManager;
 import saros.preferences.IPreferenceStore;
@@ -204,12 +204,12 @@ public class SessionNegotiationTest {
 
               @Override
               public void run() {
-                PacketCollector collector =
+                StanzaCollector collector =
                     bobReceiver.createCollector(
-                        InvitationOfferingExtension.PROVIDER.getPacketFilter());
+                        InvitationOfferingExtension.PROVIDER.getStanzaFilter());
 
                 bobNegotiationStart.countDown();
-                Packet packet = collector.nextResult(30000);
+                Stanza packet = collector.nextResult(30000);
 
                 final InvitationOfferingExtension payload =
                     InvitationOfferingExtension.PROVIDER.getPayload(packet);
@@ -237,11 +237,11 @@ public class SessionNegotiationTest {
                           @Override
                           public void run() {
                             try {
-                              PacketExtension response =
+                              ExtensionElement response =
                                   InvitationAcknowledgedExtension.PROVIDER.create(
                                       new InvitationAcknowledgedExtension(negotiationID));
 
-                              bobTransmitter.sendPacketExtension(ALICE, response);
+                              bobTransmitter.sendExtensionElement(ALICE, response);
 
                               Status status = bobIn.accept(new NullProgressMonitor());
 

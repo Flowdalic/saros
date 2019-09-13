@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManager;
-import org.jivesoftware.smack.ChatManagerListener;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.chat.ChatManagerListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.ChatStateManager;
+import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import saros.communication.chat.AbstractChatService;
 import saros.communication.chat.ChatElement;
 import saros.communication.chat.IChat;
@@ -28,10 +28,10 @@ public class SingleUserChatService extends AbstractChatService {
   private IConnectionListener connectionLister =
       new IConnectionListener() {
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState newState) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
           synchronized (SingleUserChatService.this) {
             if (newState == ConnectionState.CONNECTING) {
-              chatManager = connection.getChatManager();
+              chatManager = ChatManager.getInstanceFor(connection);
               chatManager.addChatListener(chatManagerListener);
             } else if (newState == ConnectionState.CONNECTED) {
               chatStateManager = ChatStateManager.getInstance(connection);
@@ -188,7 +188,7 @@ public class SingleUserChatService extends AbstractChatService {
     chat.initChat(
         userJID,
         chatManager.createChat(
-            chat.getParticipants().iterator().next().getBase(), chat.getMessageListener()),
+            chat.getParticipants().iterator().next().getBareJid(), chat.getMessageListener()),
         chatStateManager);
   }
 

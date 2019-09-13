@@ -142,7 +142,7 @@ public class AddContactWizard extends Wizard {
    * @param jid
    * @param nickname
    */
-  private void addToRoster(Connection connection, final JID jid, String nickname)
+  private void addToRoster(XMPPConnection connection, final JID jid, String nickname)
       throws XMPPException {
 
     if (connection == null) throw new NullPointerException("connection is null");
@@ -207,7 +207,7 @@ public class AddContactWizard extends Wizard {
               + e.getMessage());
     }
 
-    connection.getRoster().createEntry(jid.getBase(), nickname, null);
+    Roster.getInstanceFor(connection).createEntry(jid.getBase(), nickname, null);
   }
 
   private DialogContent getDialogContent(XMPPException e) {

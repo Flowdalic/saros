@@ -1,7 +1,7 @@
 package saros.whiteboard.net;
 
-import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smack.provider.PacketExtensionProvider;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.xmlpull.v1.XmlPullParser;
 import saros.whiteboard.sxe.constants.SXEMessageType;
@@ -14,7 +14,7 @@ import saros.whiteboard.sxe.net.SXESession;
  *
  * @author jurke
  */
-public class SXEExtensionProvider implements PacketExtensionProvider {
+public class SXEExtensionProvider implements ExtensionElementProvider {
 
   private static final SXEExtensionProvider instance = new SXEExtensionProvider();
 
@@ -31,7 +31,7 @@ public class SXEExtensionProvider implements PacketExtensionProvider {
   }
 
   @Override
-  public PacketExtension parseExtension(XmlPullParser xpp) throws Exception {
+  public ExtensionElement parseExtension(XmlPullParser xpp) throws Exception {
 
     SXEExtension pe = new SXEExtension();
 
@@ -42,11 +42,11 @@ public class SXEExtensionProvider implements PacketExtensionProvider {
     return pe;
   }
 
-  public SXEPacketFilter getInvitationPacketFilter() {
-    return new SXEPacketFilter(SXEMessageType.STATE_OFFER);
+  public SXEStanzaFilter getInvitationStanzaFilter() {
+    return new SXEStanzaFilter(SXEMessageType.STATE_OFFER);
   }
 
-  public SXEPacketFilter getRecordsPacketFilter(SXESession session) {
-    return new SXEPacketFilter(session, SXEMessageType.RECORDS);
+  public SXEStanzaFilter getRecordsStanzaFilter(SXESession session) {
+    return new SXEStanzaFilter(session, SXEMessageType.RECORDS);
   }
 }

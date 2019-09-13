@@ -64,7 +64,7 @@ public class DataTransferManagerTest {
     }
 
     @Override
-    public void initialize(Connection connection, IByteStreamConnectionListener listener) {
+    public void initialize(XMPPConnection connection, IByteStreamConnectionListener listener) {
       this.listener = listener;
     }
 
@@ -125,7 +125,7 @@ public class DataTransferManagerTest {
     private StreamMode mode;
     private IByteStreamConnectionListener listener;
     private volatile boolean closed;
-    private volatile int sendPackets;
+    private volatile int sendStanzas;
 
     public ChannelConnection(JID to, StreamMode mode, IByteStreamConnectionListener listener) {
       this.to = to;
@@ -151,7 +151,7 @@ public class DataTransferManagerTest {
 
     @Override
     public void send(TransferDescription data, byte[] content) throws IOException {
-      sendPackets++;
+      sendStanzas++;
     }
 
     @Override
@@ -160,7 +160,7 @@ public class DataTransferManagerTest {
     }
 
     public int getSendPacketsCount() {
-      return sendPackets;
+      return sendStanzas;
     }
 
     @Override
@@ -183,10 +183,10 @@ public class DataTransferManagerTest {
 
   private Capture<IConnectionListener> connectionListener = Capture.newInstance();
 
-  private Connection connectionMock;
+  private XMPPConnection connectionMock;
 
   {
-    connectionMock = EasyMock.createMock(Connection.class);
+    connectionMock = EasyMock.createMock(XMPPConnection.class);
     EasyMock.expect(connectionMock.getUser()).andReturn("local@host").anyTimes();
     EasyMock.replay(connectionMock);
   }
@@ -265,7 +265,7 @@ public class DataTransferManagerTest {
         .anyTimes();
 
     mainTransport.initialize(
-        EasyMock.isA(Connection.class), EasyMock.isA(IByteStreamConnectionListener.class));
+        EasyMock.isA(XMPPConnection.class), EasyMock.isA(IByteStreamConnectionListener.class));
 
     EasyMock.expectLastCall().once();
 

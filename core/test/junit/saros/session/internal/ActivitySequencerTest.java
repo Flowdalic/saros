@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -142,7 +142,7 @@ public class ActivitySequencerTest {
       brokenTransmitter.send(
           EasyMock.anyObject(String.class),
           EasyMock.anyObject(JID.class),
-          EasyMock.anyObject(PacketExtension.class));
+          EasyMock.anyObject(ExtensionElement.class));
     } catch (IOException e) {
       // cannot happen in recording mode
     }

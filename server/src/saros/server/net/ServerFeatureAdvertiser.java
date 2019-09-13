@@ -2,7 +2,7 @@ package saros.server.net;
 
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import saros.SarosConstants;
 import saros.annotations.Component;
 import saros.net.ConnectionState;
@@ -19,7 +19,7 @@ public class ServerFeatureAdvertiser {
       new IConnectionListener() {
         /** Configures server feature advertising for newly established connections. */
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState newState) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
 
           if (newState == ConnectionState.CONNECTING) {
             advertiseServerFeature(connection);
@@ -36,7 +36,7 @@ public class ServerFeatureAdvertiser {
     connectionService.addListener(connectionListener);
   }
 
-  private static void advertiseServerFeature(Connection connection) {
+  private static void advertiseServerFeature(XMPPConnection connection) {
     LOG.info("Starting to advertise ourselves as server");
 
     ServiceDiscoveryManager discoveryManager = ServiceDiscoveryManager.getInstanceFor(connection);

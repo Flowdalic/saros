@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.filetransfer.FileTransferListener;
 import org.jivesoftware.smackx.filetransfer.FileTransferRequest;
 import saros.communication.extensions.ProjectNegotiationMissingFilesExtension;
@@ -27,7 +27,7 @@ import saros.monitoring.SubProgressMonitor;
 import saros.negotiation.NegotiationTools.CancelOption;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.net.xmpp.XMPPConnectionService;
 import saros.observables.FileReplacementInProgressObservable;
@@ -55,7 +55,7 @@ public abstract class AbstractIncomingProjectNegotiation extends ProjectNegotiat
 
   protected boolean running;
 
-  private PacketCollector startActivityQueuingRequestCollector;
+  private StanzaCollector startActivityQueuingRequestCollector;
 
   /** used to handle file transmissions * */
   protected TransferListener transferListener = null;
@@ -480,7 +480,7 @@ public abstract class AbstractIncomingProjectNegotiation extends ProjectNegotiat
         "Waiting for " + getPeer().getName() + " to continue the project negotiation...",
         IProgressMonitor.UNKNOWN);
 
-    Packet packet = collectPacket(startActivityQueuingRequestCollector, PACKET_TIMEOUT);
+    Stanza packet = collectPacket(startActivityQueuingRequestCollector, PACKET_TIMEOUT);
 
     if (packet == null)
       throw new LocalCancellationException(
@@ -495,7 +495,7 @@ public abstract class AbstractIncomingProjectNegotiation extends ProjectNegotiat
   protected void createCollectors() {
     startActivityQueuingRequestCollector =
         receiver.createCollector(
-            StartActivityQueuingRequest.PROVIDER.getPacketFilter(getSessionID(), getID()));
+            StartActivityQueuingRequest.PROVIDER.getStanzaFilter(getSessionID(), getID()));
   }
 
   protected void deleteCollectors() {

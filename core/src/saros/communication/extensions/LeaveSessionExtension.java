@@ -3,7 +3,7 @@ package saros.communication.extensions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias(/* SessionLeave */ "SNLV")
-public class LeaveSessionExtension extends SarosSessionPacketExtension {
+public class LeaveSessionExtension extends SarosSessionExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -11,7 +11,7 @@ public class LeaveSessionExtension extends SarosSessionPacketExtension {
     super(sessionID);
   }
 
-  public static class Provider extends SarosSessionPacketExtension.Provider<LeaveSessionExtension> {
+  public static class Provider extends SarosSessionExtensionElement.Provider<LeaveSessionExtension> {
     private Provider() {
       super("snlv", LeaveSessionExtension.class);
     }

@@ -3,7 +3,7 @@ package saros.communication.extensions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias(/* UserListStatusUpdateProcessed */ "ULSUPS")
-public class UserListReceivedExtension extends SarosSessionPacketExtension {
+public class UserListReceivedExtension extends SarosSessionExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -12,7 +12,7 @@ public class UserListReceivedExtension extends SarosSessionPacketExtension {
   }
 
   public static class Provider
-      extends SarosSessionPacketExtension.Provider<UserListReceivedExtension> {
+      extends SarosSessionExtensionElement.Provider<UserListReceivedExtension> {
     private Provider() {
       super("ulsups", UserListReceivedExtension.class);
     }

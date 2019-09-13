@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.SarosConstants;
 import saros.communication.extensions.ConnectionEstablishedExtension;
 import saros.communication.extensions.InvitationAcceptedExtension;
@@ -20,7 +20,7 @@ import saros.negotiation.hooks.ISessionNegotiationHook;
 import saros.negotiation.hooks.SessionNegotiationHookManager;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.net.xmpp.discovery.DiscoveryManager;
 import saros.preferences.IPreferenceStore;
@@ -46,11 +46,11 @@ public final class OutgoingSessionNegotiation extends SessionNegotiation {
 
   private String localVersion;
 
-  private PacketCollector invitationAcceptedCollector;
-  private PacketCollector invitationAcknowledgedCollector;
-  private PacketCollector invitationDataExchangeCollector;
-  private PacketCollector invitationCompletedCollector;
-  private PacketCollector invitationConnectionEstablishedCollector;
+  private StanzaCollector invitationAcceptedCollector;
+  private StanzaCollector invitationAcknowledgedCollector;
+  private StanzaCollector invitationDataExchangeCollector;
+  private StanzaCollector invitationCompletedCollector;
+  private StanzaCollector invitationConnectionEstablishedCollector;
 
   private final VersionManager versionManager;
 
@@ -282,7 +282,7 @@ public final class OutgoingSessionNegotiation extends SessionNegotiation {
     InvitationOfferingExtension invitationOffering =
         new InvitationOfferingExtension(getID(), sarosSession.getID(), localVersion, description);
 
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         getPeer(), InvitationOfferingExtension.PROVIDER.create(invitationOffering));
   }
 
@@ -351,7 +351,7 @@ public final class OutgoingSessionNegotiation extends SessionNegotiation {
 
     monitor.setTaskName("Waiting for remote session configuration data...");
 
-    Packet packet = collectPacket(invitationDataExchangeCollector, PACKET_TIMEOUT);
+    Stanza packet = collectPacket(invitationDataExchangeCollector, PACKET_TIMEOUT);
 
     if (packet == null)
       throw new LocalCancellationException(
@@ -404,7 +404,7 @@ public final class OutgoingSessionNegotiation extends SessionNegotiation {
     log.debug(this + " : sending updated session negotiation data");
 
     monitor.setTaskName("Sending final session configuration data...");
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         getPeer(), InvitationParameterExchangeExtension.PROVIDER.create(modifiedParameters));
 
     log.debug(this + " : sent updated session negotiation data");
@@ -511,20 +511,20 @@ public final class OutgoingSessionNegotiation extends SessionNegotiation {
      */
 
     invitationAcceptedCollector =
-        receiver.createCollector(InvitationAcceptedExtension.PROVIDER.getPacketFilter(getID()));
+        receiver.createCollector(InvitationAcceptedExtension.PROVIDER.getStanzaFilter(getID()));
 
     invitationAcknowledgedCollector =
-        receiver.createCollector(InvitationAcknowledgedExtension.PROVIDER.getPacketFilter(getID()));
+        receiver.createCollector(InvitationAcknowledgedExtension.PROVIDER.getStanzaFilter(getID()));
 
     invitationDataExchangeCollector =
         receiver.createCollector(
-            InvitationParameterExchangeExtension.PROVIDER.getPacketFilter(getID()));
+            InvitationParameterExchangeExtension.PROVIDER.getStanzaFilter(getID()));
 
     invitationCompletedCollector =
-        receiver.createCollector(InvitationCompletedExtension.PROVIDER.getPacketFilter(getID()));
+        receiver.createCollector(InvitationCompletedExtension.PROVIDER.getStanzaFilter(getID()));
 
     invitationConnectionEstablishedCollector =
-        receiver.createCollector(ConnectionEstablishedExtension.PROVIDER.getPacketFilter(getID()));
+        receiver.createCollector(XMPPConnectionEstablishedExtension.PROVIDER.getStanzaFilter(getID()));
   }
 
   private void deleteCollectors() {

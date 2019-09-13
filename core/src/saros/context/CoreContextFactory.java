@@ -56,7 +56,7 @@ public class CoreContextFactory extends AbstractContextFactory {
     return new Component[] {
 
       // Facades
-      Component.create(ConnectionHandler.class),
+      Component.create(XMPPConnectionHandler.class),
 
       // Version support
       Component.create(VersionManager.class),

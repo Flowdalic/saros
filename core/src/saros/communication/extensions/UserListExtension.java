@@ -8,7 +8,7 @@ import saros.session.User;
 import saros.session.User.Permission;
 
 @XStreamAlias(/* UserListStatusUpdate */ "ULSUP")
-public class UserListExtension extends SarosSessionPacketExtension {
+public class UserListExtension extends SarosSessionExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -55,7 +55,7 @@ public class UserListExtension extends SarosSessionPacketExtension {
     }
   }
 
-  public static class Provider extends SarosSessionPacketExtension.Provider<UserListExtension> {
+  public static class Provider extends SarosSessionExtensionElement.Provider<UserListExtension> {
 
     private Provider() {
       super("ulsup", UserListExtension.class);

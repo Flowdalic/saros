@@ -5,8 +5,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.JoinSessionRequestExtension;
 import saros.net.IReceiver;
 import saros.net.xmpp.JID;
@@ -34,10 +34,10 @@ public final class JoinSessionRequestHandler {
           new NamedThreadFactory("JoinSessionRequestHandler-"),
           new ThreadPoolExecutor.DiscardPolicy());
 
-  private final PacketListener joinSessionRequestListener =
-      new PacketListener() {
+  private final StanzaListener joinSessionRequestListener =
+      new StanzaListener() {
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
           try {
             executor.execute(
                 new Runnable() {
@@ -57,8 +57,8 @@ public final class JoinSessionRequestHandler {
   public JoinSessionRequestHandler(ISarosSessionManager sessionManager, IReceiver receiver) {
 
     this.sessionManager = sessionManager;
-    receiver.addPacketListener(
-        joinSessionRequestListener, JoinSessionRequestExtension.PROVIDER.getPacketFilter());
+    receiver.addStanzaListener(
+        joinSessionRequestListener, JoinSessionRequestExtension.PROVIDER.getStanzaFilter());
   }
 
   private void handleInvitationRequest(final JID from, JoinSessionRequestExtension extension) {

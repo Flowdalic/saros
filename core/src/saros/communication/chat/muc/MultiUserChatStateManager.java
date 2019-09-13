@@ -7,13 +7,13 @@ import java.util.WeakHashMap;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
-import org.jivesoftware.smackx.ChatState;
-import org.jivesoftware.smackx.ServiceDiscoveryManager;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.packet.ChatStateExtension;
 import saros.communication.chat.IChatListener;
@@ -49,7 +49,7 @@ class MultiUserChatStateManager {
    * @return
    */
   public static MultiUserChatStateManager getInstance(
-      final Connection connection, final MultiUserChat muc) {
+      final XMPPConnection connection, final MultiUserChat muc) {
 
     if (connection == null) {
       return null;
@@ -65,24 +65,24 @@ class MultiUserChatStateManager {
     }
   }
 
-  protected Connection connection;
+  protected XMPPConnection connection;
   protected MultiUserChat muc;
   protected ChatState lastState = null;
   protected List<IChatListener> stateListeners = new ArrayList<IChatListener>();
 
   /**
-   * Checks every incoming {@link Message} for the {@link PacketExtension} {@link
+   * Checks every incoming {@link Message} for the {@link ExtensionElement} {@link
    * MultiUserChatStateManager#CHATSTATES_FEATURE} and notifies all {@link IChatListener}s in case
    * of a {@link ChatState} change.
    */
-  protected PacketListener incomingMessageInterceptor =
-      new PacketListener() {
+  protected StanzaListener incomingMessageInterceptor =
+      new StanzaListener() {
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           assert packet instanceof Message
               : "This interceptor is only intended to handle XMPP Messages";
           Message message = (Message) packet;
-          PacketExtension extension = message.getExtension(CHATSTATES_FEATURE);
+          ExtensionElement extension = message.getExtension(CHATSTATES_FEATURE);
 
           if (extension == null) {
             return;
@@ -105,7 +105,7 @@ class MultiUserChatStateManager {
         }
       };
 
-  protected MultiUserChatStateManager(Connection connection, MultiUserChat muc) {
+  protected MultiUserChatStateManager(XMPPConnection connection, MultiUserChat muc) {
     log.setLevel(Level.TRACE);
 
     this.connection = connection;
@@ -119,7 +119,7 @@ class MultiUserChatStateManager {
 
   /**
    * Sets the current state of the provided chat. This method will send an empty bodied Message
-   * packet with the state attached as a {@link org.jivesoftware.smack.packet.PacketExtension}, iff
+   * packet with the state attached as a {@link org.jivesoftware.smack.packet.ExtensionElement}, iff
    * the new chat state is different than the last state.
    *
    * @param newState the new state of the chat

@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.ChatState;
+import org.jivesoftware.smackx.chatstates.ChatState;
 import saros.annotations.Component;
 import saros.communication.chat.AbstractChatService;
 import saros.communication.chat.IChat;
@@ -52,7 +52,7 @@ public class MultiUserChatService extends AbstractChatService {
       new IConnectionListener() {
 
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState state) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState state) {
 
           if (state == ConnectionState.CONNECTED)
             MultiUserChatService.this.connection.set(connection);
@@ -81,7 +81,7 @@ public class MultiUserChatService extends AbstractChatService {
    * TODO connectMUC should be split into create and join; bkahlert 2010/11/23
    */
   public IChat createChat(MultiUserChatPreferences preferences) {
-    Connection currentConnection = this.connection.get();
+    XMPPConnection currentConnection = this.connection.get();
 
     if (currentConnection == null) {
       log.error("Can't join chat: Not connected.");

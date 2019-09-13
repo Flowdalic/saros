@@ -3,7 +3,7 @@ package saros.communication.extensions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("SSRs")
-public class SessionStatusResponseExtension extends SarosPacketExtension {
+public class SessionStatusResponseExtension extends SarosExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -49,7 +49,7 @@ public class SessionStatusResponseExtension extends SarosPacketExtension {
   }
 
   public static class Provider
-      extends SarosPacketExtension.Provider<SessionStatusResponseExtension> {
+      extends SarosExtensionElement.Provider<SessionStatusResponseExtension> {
     private Provider() {
       super("sessionStatusResponse", SessionStatusResponseExtension.class);
     }

@@ -664,7 +664,7 @@ public class Socks5StreamService implements IStreamService, BytestreamListener {
   }
 
   @Override
-  public void initialize(Connection connection, IByteStreamConnectionListener listener) {
+  public void initialize(XMPPConnection connection, IByteStreamConnectionListener listener) {
 
     synchronized (this) {
       localAddress = new JID(connection.getUser());
@@ -739,7 +739,7 @@ public class Socks5StreamService implements IStreamService, BytestreamListener {
     }
   }
 
-  private Socks5BytestreamManager createManager(Connection connection) {
+  private Socks5BytestreamManager createManager(XMPPConnection connection) {
     Socks5BytestreamManager socks5ByteStreamManager =
         Socks5BytestreamManager.getBytestreamManager(connection);
 

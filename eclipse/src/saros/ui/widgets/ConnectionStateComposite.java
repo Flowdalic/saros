@@ -35,12 +35,12 @@ import saros.ui.views.SarosView;
 // FIXME displaying account related information is not the best decision.
 public class ConnectionStateComposite extends Composite {
 
-  private static final Logger LOG = Logger.getLogger(ConnectionStateComposite.class);
+  private static final Logger LOG = Logger.getLogger(XMPPConnectionStateComposite.class);
 
   private static final String CONNECTED_TOOLTIP =
       Messages.ConnectionStateComposite_tooltip_connected;
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   @Inject private @SarosVersion String version;
 
@@ -74,7 +74,7 @@ public class ConnectionStateComposite extends Composite {
               new Runnable() {
                 @Override
                 public void run() {
-                  if (ConnectionStateComposite.this.isDisposed()) return;
+                  if (XMPPConnectionStateComposite.this.isDisposed()) return;
 
                   updateLabel(state, error);
                 }
@@ -122,7 +122,7 @@ public class ConnectionStateComposite extends Composite {
    * @param state the current connection state or <code>null</code>
    * @param error additional error information or <code>null</code>
    */
-  private void updateLabel(ConnectionState state, Exception error) {
+  private void updateLabel(XMPPConnectionState state, Exception error) {
 
     // do not hide the latest error
     if (lastConnectionState == ConnectionState.ERROR && state == ConnectionState.NOT_CONNECTED)
@@ -156,7 +156,7 @@ public class ConnectionStateComposite extends Composite {
    * Returns a nice string description of the given state, which can be used to be shown in labels
    * (e.g. CONNECTING becomes "Connecting...").
    */
-  private String getDescription(ConnectionState state, Exception error) {
+  private String getDescription(XMPPConnectionState state, Exception error) {
 
     switch (state) {
       case NOT_CONNECTED:
@@ -198,10 +198,10 @@ public class ConnectionStateComposite extends Composite {
           return Messages.ConnectionStateComposite_error_connection_lost;
 
         if (lastConnectionState == ConnectionState.CONNECTING) {
-          SarosView.showNotification("XMPP Connection lost", "You are already logged in.");
+          SarosView.showNotification("XMPP XMPPConnection lost", "You are already logged in.");
         } else {
           SarosView.showNotification(
-              "XMPP Connection lost", Messages.ConnectionStateComposite_remote_login_warning);
+              "XMPP XMPPConnection lost", Messages.ConnectionStateComposite_remote_login_warning);
         }
 
         return Messages.ConnectionStateComposite_error_resource_conflict;

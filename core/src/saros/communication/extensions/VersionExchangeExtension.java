@@ -6,7 +6,7 @@ import java.util.Map;
 import saros.misc.xstream.XStreamExtensionProvider;
 
 /**
- * Packet containing data for exchanging version details. This packet extension is <b>NOT</b>
+ * Stanza containing data for exchanging version details. This packet extension is <b>NOT</b>
  * affected by the current Saros Extension protocol version because it must be always possible to
  * communicate with older and newer Saros Version to determine compatibility.
  *
@@ -48,7 +48,7 @@ public class VersionExchangeExtension {
   public static class Provider extends XStreamExtensionProvider<VersionExchangeExtension> {
 
     private Provider() {
-      super(SarosPacketExtension.EXTENSION_NAMESPACE, "verex", VersionExchangeExtension.class);
+      super(SarosExtensionElement.EXTENSION_NAMESPACE, "verex", VersionExchangeExtension.class);
     }
   }
 }

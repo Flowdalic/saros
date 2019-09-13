@@ -42,7 +42,7 @@ public class CreateXMPPAccountWizard extends Wizard {
 
   @Inject private XMPPAccountStore accountStore;
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   private final CreateXMPPAccountWizardPage createXMPPAccountPage;
 

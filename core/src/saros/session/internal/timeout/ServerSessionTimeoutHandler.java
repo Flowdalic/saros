@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.PingExtension;
 import saros.communication.extensions.PongExtension;
 import saros.net.IReceiver;
@@ -47,11 +47,11 @@ public final class ServerSessionTimeoutHandler extends SessionTimeoutHandler {
     }
   }
 
-  private final PacketListener pongPacketListener =
-      new PacketListener() {
+  private final StanzaListener pongStanzaListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           JID jid = new JID(packet.getFrom());
           synchronized (ServerSessionTimeoutHandler.this) {
             for (UserPongStatus status : currentUsers) {
@@ -159,8 +159,8 @@ public final class ServerSessionTimeoutHandler extends SessionTimeoutHandler {
 
     super.start();
 
-    receiver.addPacketListener(
-        pongPacketListener, PongExtension.PROVIDER.getPacketFilter(currentSessionID));
+    receiver.addStanzaListener(
+        pongStanzaListener, PongExtension.PROVIDER.getStanzaFilter(currentSessionID));
 
     session.addListener(sessionListener);
 
@@ -172,7 +172,7 @@ public final class ServerSessionTimeoutHandler extends SessionTimeoutHandler {
   public void stop() {
     super.stop();
 
-    receiver.removePacketListener(pongPacketListener);
+    receiver.removeStanzaListener(pongStanzaListener);
 
     session.removeListener(sessionListener);
 

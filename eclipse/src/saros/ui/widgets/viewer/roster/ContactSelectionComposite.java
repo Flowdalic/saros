@@ -67,7 +67,7 @@ public class ContactSelectionComposite extends ViewerComposite<CheckboxTreeViewe
   protected final IConnectionListener connectionListener =
       new IConnectionListener() {
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState newState) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState newState) {
           switch (newState) {
             case CONNECTED:
               ViewerUtils.setInput(getViewer(), connectionService.getRoster());

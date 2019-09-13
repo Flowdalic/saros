@@ -86,12 +86,12 @@ public class HostLeftAloneInSessionHandler {
            * <pre>
            * DEBUG 16:49:08,878 [main] (HostLeftAloneInSessionHandler.java:44) sessionManager.userLeft
            * INFO  16:49:08,888 [main] (SarosSession.java:612) Buddy [jenkins_bob_stf@saros-con.imp.fu-berlin.de/Saros]  left session
-           * DEBUG 16:49:08,888 [Thread-217] (BinaryChannelConnection.java:51) SOCKS5 (direct) [jenkins_bob_stf@saros-con.imp.fu-berlin.de/Saros] Connection was closed by me. socket closed
+           * DEBUG 16:49:08,888 [Thread-217] (BinaryChannelConnection.java:51) SOCKS5 (direct) [jenkins_bob_stf@saros-con.imp.fu-berlin.de/Saros] XMPPConnection was closed by me. socket closed
            * TRACE 16:49:09,060 [main] (EditorManager.java:1027) .partActivated invoked
            * TRACE 16:49:09,060 [main] (SharedProjectFileDecorator.java:133) User: jenkins_alice_stf activated an editor -> SPath [editorType=txt, path=src/de/alice/HelloWorld.java, project=java]
            * TRACE 16:49:09,070 [Worker-10] (SharedProjectFileDecorator.java:301) No Deco: L/java/src/de/alice/HelloWorld.java
            * TRACE 16:49:09,083 [Worker-10] (SharedProjectFileDecorator.java:301) No Deco: P/java
-           * TRACE 16:49:09,122 [RMI TCP Connection(5)-127.0.0.1] (RemoteWorkbenchBot.java:75) opening view with id: saros.ui.views.SarosView
+           * TRACE 16:49:09,122 [RMI TCP XMPPConnection(5)-127.0.0.1] (RemoteWorkbenchBot.java:75) opening view with id: saros.ui.views.SarosView
            * DEBUG 16:49:09,422 [Worker-9] (OutgoingProjectNegotiation.java:433) OPN [remote side: jenkins_bob_stf@saros-con.imp.fu-berlin.de/Saros] : archive send
            * DEBUG 16:49:09,422 [Worker-9] (CancelableProcess.java:280) process OPN [remote side: jenkins_bob_stf@saros-con.imp.fu-berlin.de/Saros] exit status: OK
            * </pre>

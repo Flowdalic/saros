@@ -51,7 +51,7 @@ public class State {
     this.activeAccount = activeAccount;
   }
 
-  public void setConnectionState(ConnectionState connectionState) {
+  public void setConnectionState(XMPPConnectionState connectionState) {
     this.connectionState = connectionState;
   }
 

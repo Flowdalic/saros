@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.activities.IResourceActivity;
 import saros.annotations.Component;
 import saros.communication.extensions.UserFinishedProjectNegotiationExtension;
@@ -18,7 +18,7 @@ import saros.communication.extensions.UserListExtension.UserListEntry;
 import saros.communication.extensions.UserListReceivedExtension;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.preferences.PreferenceStore;
 import saros.repackaged.picocontainer.Startable;
@@ -47,20 +47,20 @@ public class UserInformationHandler implements Startable {
 
   private volatile boolean isRunning;
 
-  private final PacketListener userListListener =
-      new PacketListener() {
+  private final StanzaListener userListListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           handleUserListUpdate(packet);
         }
       };
 
-  private final PacketListener userFinishedProjectNegotiations =
-      new PacketListener() {
+  private final StanzaListener userFinishedProjectNegotiations =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
           handleUserFinishedProjectNegotiationPacket(packet);
         }
       };
@@ -76,20 +76,20 @@ public class UserInformationHandler implements Startable {
   @Override
   public void start() {
 
-    receiver.addPacketListener(
-        userListListener, UserListExtension.PROVIDER.getPacketFilter(currentSessionID));
+    receiver.addStanzaListener(
+        userListListener, UserListExtension.PROVIDER.getStanzaFilter(currentSessionID));
 
-    receiver.addPacketListener(
+    receiver.addStanzaListener(
         userFinishedProjectNegotiations,
-        UserFinishedProjectNegotiationExtension.PROVIDER.getPacketFilter(currentSessionID));
+        UserFinishedProjectNegotiationExtension.PROVIDER.getStanzaFilter(currentSessionID));
 
     isRunning = true;
   }
 
   @Override
   public void stop() {
-    receiver.removePacketListener(userListListener);
-    receiver.removePacketListener(userFinishedProjectNegotiations);
+    receiver.removeStanzaListener(userListListener);
+    receiver.removeStanzaListener(userFinishedProjectNegotiations);
     isRunning = false;
   }
 
@@ -138,9 +138,9 @@ public class UserInformationHandler implements Startable {
             + " with user(s) "
             + remoteUsers);
 
-    final PacketCollector collector =
+    final StanzaCollector collector =
         receiver.createCollector(
-            UserListReceivedExtension.PROVIDER.getPacketFilter(currentSessionID));
+            UserListReceivedExtension.PROVIDER.getStanzaFilter(currentSessionID));
 
     try {
       for (User user : remoteUsers) {
@@ -176,7 +176,7 @@ public class UserInformationHandler implements Startable {
 
         if (awaitReply.isEmpty() || !isRunning) break;
 
-        Packet result = collector.nextResult(100);
+        Stanza result = collector.nextResult(100);
 
         if (result == null) continue;
 
@@ -210,7 +210,7 @@ public class UserInformationHandler implements Startable {
    */
   public void sendUserFinishedProjectNegotiation(Collection<User> remoteUsers, JID jid) {
 
-    PacketExtension packet =
+    ExtensionElement packet =
         UserFinishedProjectNegotiationExtension.PROVIDER.create(
             new UserFinishedProjectNegotiationExtension(currentSessionID, jid));
 
@@ -229,7 +229,7 @@ public class UserInformationHandler implements Startable {
    *
    * @param packet
    */
-  private void handleUserFinishedProjectNegotiationPacket(Packet packet) {
+  private void handleUserFinishedProjectNegotiationPacket(Stanza packet) {
 
     JID fromJID = new JID(packet.getFrom());
 
@@ -259,7 +259,7 @@ public class UserInformationHandler implements Startable {
     session.userFinishedProjectNegotiation(fromUser);
   }
 
-  private void handleUserListUpdate(Packet packet) {
+  private void handleUserListUpdate(Stanza packet) {
     /*
      * maybe it is better to execute all the code in a new thread to prevent
      * blocking the listener callback thread

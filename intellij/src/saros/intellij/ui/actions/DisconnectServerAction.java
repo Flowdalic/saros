@@ -15,7 +15,7 @@ public class DisconnectServerAction extends AbstractSarosAction {
 
   private final Project project;
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   public DisconnectServerAction(Project project) {
     this.project = project;

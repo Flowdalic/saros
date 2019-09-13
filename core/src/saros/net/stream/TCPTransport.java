@@ -46,7 +46,7 @@ public class TCPTransport implements IStreamService {
   }
 
   @Override
-  public void initialize(Connection connection, IByteStreamConnectionListener listener) {
+  public void initialize(XMPPConnection connection, IByteStreamConnectionListener listener) {
 
     currentListener = listener;
   }

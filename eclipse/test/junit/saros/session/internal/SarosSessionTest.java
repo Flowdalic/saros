@@ -23,9 +23,9 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -47,7 +47,7 @@ import saros.filesystem.IPathFactory;
 import saros.net.IConnectionManager;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.net.xmpp.XMPPConnectionService;
 import saros.preferences.EclipsePreferenceConstants;
@@ -81,26 +81,26 @@ public class SarosSessionTest {
     private int currentListeners;
 
     @Override
-    public synchronized void addPacketListener(PacketListener listener, PacketFilter filter) {
+    public synchronized void addStanzaListener(StanzaListener listener, StanzaFilter filter) {
       currentListeners++;
     }
 
     @Override
-    public synchronized void removePacketListener(PacketListener listener) {
+    public synchronized void removeStanzaListener(StanzaListener listener) {
       currentListeners--;
     }
 
     @Override
-    public void processPacket(Packet packet) {
+    public void processStanza(Stanza packet) {
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public PacketCollector createCollector(PacketFilter filter) {
+    public StanzaCollector createCollector(StanzaFilter filter) {
       throw new UnsupportedOperationException();
     }
 
-    public synchronized int getCurrentPacketListenersCount() {
+    public synchronized int getCurrentStanzaListenersCount() {
       return currentListeners;
     }
   }
@@ -219,11 +219,11 @@ public class SarosSessionTest {
 
     IReceiver receiver = createMock(IReceiver.class);
 
-    receiver.addPacketListener(anyObject(PacketListener.class), anyObject(PacketFilter.class));
+    receiver.addStanzaListener(anyObject(StanzaListener.class), anyObject(StanzaFilter.class));
 
     expectLastCall().andStubDelegateTo(countingReceiver);
 
-    receiver.removePacketListener(anyObject(PacketListener.class));
+    receiver.removeStanzaListener(anyObject(StanzaListener.class));
     expectLastCall().andStubDelegateTo(countingReceiver);
 
     replay(receiver);
@@ -335,7 +335,7 @@ public class SarosSessionTest {
 
     assertFalse(session.hasActivityConsumers());
     assertFalse(session.hasActivityProducers());
-    assertEquals(0, countingReceiver.getCurrentPacketListenersCount());
+    assertEquals(0, countingReceiver.getCurrentStanzaListenersCount());
 
     assertTrue(workspaceListeners.isEmpty());
 
@@ -371,7 +371,7 @@ public class SarosSessionTest {
     assertEquals(
         "not all packet listeners were removed from the receiver",
         0,
-        countingReceiver.getCurrentPacketListenersCount());
+        countingReceiver.getCurrentStanzaListenersCount());
 
     PowerMock.verifyAll();
   }

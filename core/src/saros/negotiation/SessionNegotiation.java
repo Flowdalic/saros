@@ -20,7 +20,7 @@
 package saros.negotiation;
 
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.communication.extensions.CancelInviteExtension;
 import saros.exceptions.LocalCancellationException;
 import saros.exceptions.SarosCancellationException;
@@ -97,11 +97,11 @@ public abstract class SessionNegotiation extends Negotiation {
 
     log.debug("notifying remote contact " + getPeer() + " of the local cancellation");
 
-    PacketExtension notification =
+    ExtensionElement notification =
         CancelInviteExtension.PROVIDER.create(
             new CancelInviteExtension(getID(), cause.getMessage()));
 
-    transmitter.sendPacketExtension(getPeer(), notification);
+    transmitter.sendExtensionElement(getPeer(), notification);
   }
 
   @Override

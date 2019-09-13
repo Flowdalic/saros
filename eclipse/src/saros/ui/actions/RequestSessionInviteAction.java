@@ -53,7 +53,7 @@ public class RequestSessionInviteAction extends Action implements Disposable {
       return;
     }
 
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         jid, JoinSessionRequestExtension.PROVIDER.create(new JoinSessionRequestExtension()));
   }
 

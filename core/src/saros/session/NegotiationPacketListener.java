@@ -2,9 +2,9 @@ package saros.session;
 
 import java.util.List;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.communication.extensions.CancelInviteExtension;
 import saros.communication.extensions.CancelProjectNegotiationExtension;
 import saros.communication.extensions.InvitationAcknowledgedExtension;
@@ -24,9 +24,9 @@ import saros.net.xmpp.JID;
  * <p><b>Restriction:</b> This class must only instantiated by the <code>SarosSessionManager</code>
  * itself.
  */
-final class NegotiationPacketListener {
+final class NegotiationStanzaListener {
 
-  private static final Logger LOG = Logger.getLogger(NegotiationPacketListener.class);
+  private static final Logger LOG = Logger.getLogger(NegotiationStanzaListener.class);
 
   private final ITransmitter transmitter;
   private final IReceiver receiver;
@@ -44,30 +44,30 @@ final class NegotiationPacketListener {
 
         @Override
         public void sessionStarted(final ISarosSession session) {
-          receiver.addPacketListener(
+          receiver.addStanzaListener(
               projectNegotiationRequestListener,
-              ProjectNegotiationOfferingExtension.PROVIDER.getPacketFilter(session.getID()));
+              ProjectNegotiationOfferingExtension.PROVIDER.getStanzaFilter(session.getID()));
 
-          receiver.addPacketListener(
+          receiver.addStanzaListener(
               projectNegotiationCanceledListener,
-              CancelProjectNegotiationExtension.PROVIDER.getPacketFilter(session.getID()));
+              CancelProjectNegotiationExtension.PROVIDER.getStanzaFilter(session.getID()));
         }
 
         @Override
         public void sessionEnded(ISarosSession session, SessionEndReason reason) {
-          receiver.removePacketListener(projectNegotiationRequestListener);
-          receiver.removePacketListener(projectNegotiationCanceledListener);
+          receiver.removeStanzaListener(projectNegotiationRequestListener);
+          receiver.removeStanzaListener(projectNegotiationCanceledListener);
         }
       };
 
   /*
-   * ******************** Packet Listeners START ************************
+   * ******************** Stanza Listeners START ************************
    */
-  private final PacketListener sessionNegotiationCanceledListener =
-      new PacketListener() {
+  private final StanzaListener sessionNegotiationCanceledListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
 
           final CancelInviteExtension extension = CancelInviteExtension.PROVIDER.getPayload(packet);
 
@@ -81,11 +81,11 @@ final class NegotiationPacketListener {
         }
       };
 
-  private final PacketListener sessionNegotiationRequestListener =
-      new PacketListener() {
+  private final StanzaListener sessionNegotiationRequestListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
 
           final InvitationOfferingExtension extension =
               InvitationOfferingExtension.PROVIDER.getPayload(packet);
@@ -104,11 +104,11 @@ final class NegotiationPacketListener {
         }
       };
 
-  private final PacketListener projectNegotiationCanceledListener =
-      new PacketListener() {
+  private final StanzaListener projectNegotiationCanceledListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
 
           final CancelProjectNegotiationExtension extension =
               CancelProjectNegotiationExtension.PROVIDER.getPayload(packet);
@@ -123,11 +123,11 @@ final class NegotiationPacketListener {
         }
       };
 
-  private final PacketListener projectNegotiationRequestListener =
-      new PacketListener() {
+  private final StanzaListener projectNegotiationRequestListener =
+      new StanzaListener() {
 
         @Override
-        public void processPacket(final Packet packet) {
+        public void processStanza(final Stanza packet) {
 
           final ProjectNegotiationOfferingExtension extension =
               ProjectNegotiationOfferingExtension.PROVIDER.getPayload(packet);
@@ -145,10 +145,10 @@ final class NegotiationPacketListener {
       };
 
   /*
-   * ******************** Packet Listeners END*******************************
+   * ******************** Stanza Listeners END*******************************
    */
 
-  NegotiationPacketListener(
+  NegotiationStanzaListener(
       final SarosSessionManager sessionManager,
       final SessionNegotiationObservable sessionNegotiations,
       final ProjectNegotiationObservable projectNegotiations,
@@ -183,11 +183,11 @@ final class NegotiationPacketListener {
   }
 
   private void init() {
-    receiver.addPacketListener(
-        sessionNegotiationCanceledListener, CancelInviteExtension.PROVIDER.getPacketFilter());
+    receiver.addStanzaListener(
+        sessionNegotiationCanceledListener, CancelInviteExtension.PROVIDER.getStanzaFilter());
 
-    receiver.addPacketListener(
-        sessionNegotiationRequestListener, InvitationOfferingExtension.PROVIDER.getPacketFilter());
+    receiver.addStanzaListener(
+        sessionNegotiationRequestListener, InvitationOfferingExtension.PROVIDER.getStanzaFilter());
 
     sessionManager.addSessionLifecycleListener(sessionLifecycleListener);
   }
@@ -244,13 +244,13 @@ final class NegotiationPacketListener {
        * FIXME This text should be replaced with a cancel ID. This is GUI
        * logic here.
        */
-      final PacketExtension response =
+      final ExtensionElement response =
           CancelInviteExtension.PROVIDER.create(
               new CancelInviteExtension(
                   negotiationID,
                   "I am already in a Saros session and so cannot accept your invitation."));
 
-      transmitter.sendPacketExtension(sender, response);
+      transmitter.sendExtensionElement(sender, response);
       return;
     }
 
@@ -264,11 +264,11 @@ final class NegotiationPacketListener {
      * (host). Afterwards, the control is handed over to the SessionManager.
      */
 
-    final PacketExtension response =
+    final ExtensionElement response =
         InvitationAcknowledgedExtension.PROVIDER.create(
             new InvitationAcknowledgedExtension(negotiationID));
 
-    transmitter.sendPacketExtension(sender, response);
+    transmitter.sendExtensionElement(sender, response);
 
     /*
      * SessionManager will set rejectSessionNegotiationRequests to true in

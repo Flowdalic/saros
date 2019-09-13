@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.exceptions.LocalCancellationException;
 import saros.exceptions.RemoteCancellationException;
 import saros.exceptions.SarosCancellationException;
@@ -13,7 +13,7 @@ import saros.negotiation.NegotiationTools.CancelLocation;
 import saros.negotiation.NegotiationTools.CancelOption;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 
 /**
@@ -137,10 +137,10 @@ abstract class Negotiation {
    *     period
    * @throws SarosCancellationException if the process was canceled
    */
-  protected final Packet collectPacket(PacketCollector collector, long timeout)
+  protected final Stanza collectPacket(StanzaCollector collector, long timeout)
       throws SarosCancellationException {
 
-    Packet packet = null;
+    Stanza packet = null;
 
     for (long timeLeft = timeout; timeLeft > 0; timeLeft -= 1000) {
       checkCancellation(CancelOption.NOTIFY_PEER);

@@ -9,9 +9,9 @@ import org.apache.log4j.Logger;
  * A connection pool with the ability to close all pooled connections when the pool is closed. After
  * construction the pool must be opened first.
  */
-final class ConnectionPool {
+final class XMPPConnectionPool {
 
-  private static final Logger LOG = Logger.getLogger(ConnectionPool.class);
+  private static final Logger LOG = Logger.getLogger(XMPPConnectionPool.class);
 
   private boolean isOpen;
 

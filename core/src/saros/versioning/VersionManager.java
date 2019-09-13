@@ -9,17 +9,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.annotations.Component;
 import saros.communication.extensions.VersionExchangeExtension;
 import saros.context.IContextKeyBindings.SarosVersion;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 
 /**
@@ -54,14 +54,14 @@ public class VersionManager {
   private final ITransmitter transmitter;
   private final IReceiver receiver;
 
-  private final PacketListener versionRequestListener =
-      new PacketListener() {
+  private final StanzaListener versionRequestListener =
+      new StanzaListener() {
         /*
          * As some of the logic may changed in the next Saros versions this
          * method MUST be robust as possible, expect weird and faulty data !
          */
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
 
           LOG.debug("received version request from " + packet.getFrom());
 
@@ -107,7 +107,7 @@ public class VersionManager {
           reply.setTo(packet.getFrom());
 
           try {
-            transmitter.sendPacket(reply);
+            transmitter.sendStanza(reply);
           } catch (IOException e) {
             LOG.error("could not send version response to " + packet.getFrom(), e);
           }
@@ -129,13 +129,13 @@ public class VersionManager {
     this.receiver = receiver;
     this.transmitter = transmitter;
 
-    receiver.addPacketListener(
+    receiver.addStanzaListener(
         versionRequestListener,
         new AndFilter(
             VersionExchangeExtension.PROVIDER.getIQFilter(),
-            new PacketFilter() {
+            new StanzaFilter() {
               @Override
-              public boolean accept(Packet packet) {
+              public boolean accept(Stanza packet) {
                 return ((IQ) packet).getType() == IQ.Type.GET;
               }
             }));
@@ -273,13 +273,13 @@ public class VersionManager {
     request.setType(IQ.Type.GET);
     request.setTo(rqJID.toString());
 
-    PacketCollector collector =
+    StanzaCollector collector =
         receiver.createCollector(
             new AndFilter(
                 VersionExchangeExtension.PROVIDER.getIQFilter(),
-                new PacketFilter() {
+                new StanzaFilter() {
                   @Override
-                  public boolean accept(Packet packet) {
+                  public boolean accept(Stanza packet) {
 
                     VersionExchangeExtension versionExchange =
                         VersionExchangeExtension.PROVIDER.getPayload(packet);
@@ -293,7 +293,7 @@ public class VersionManager {
                 }));
 
     try {
-      transmitter.sendPacket(request);
+      transmitter.sendStanza(request);
       return VersionExchangeExtension.PROVIDER.getPayload(collector.nextResult(timeout));
     } catch (IOException e) {
       LOG.warn(e.getMessage(), e);

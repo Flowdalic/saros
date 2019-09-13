@@ -1,6 +1,6 @@
 package saros.whiteboard.net;
 
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.whiteboard.sxe.net.SXEMessage;
 import saros.whiteboard.sxe.net.SXEMessageWriter;
 
@@ -10,7 +10,7 @@ import saros.whiteboard.sxe.net.SXEMessageWriter;
  *
  * @author jurke
  */
-public class SXEExtension implements PacketExtension {
+public class SXEExtension implements ExtensionElement {
 
   protected SXEMessageWriter msgFactory = new SXEMessageWriter();
 
@@ -27,7 +27,7 @@ public class SXEExtension implements PacketExtension {
   }
 
   @Override
-  public String toXML() {
+  public String toXML(String enclosingNamespace) {
     return msgFactory.getSXEMessageAsString(message);
   }
 

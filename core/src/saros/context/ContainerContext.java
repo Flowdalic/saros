@@ -99,7 +99,7 @@ public class ContainerContext implements IContainerContext {
     container = builder.build();
   }
 
-  private void installPacketExtensionProviders() {
+  private void installExtensionElementProviders() {
 
     /* *
      *
@@ -125,7 +125,7 @@ public class ContainerContext implements IContainerContext {
       Class.forName(InvitationAcknowledgedExtension.class.getName());
       Class.forName(InvitationAcceptedExtension.class.getName());
       Class.forName(InvitationCompletedExtension.class.getName());
-      Class.forName(ConnectionEstablishedExtension.class.getName());
+      Class.forName(XMPPConnectionEstablishedExtension.class.getName());
 
       // Project negotiation extensions
       Class.forName(CancelProjectNegotiationExtension.class.getName());
@@ -174,7 +174,7 @@ public class ContainerContext implements IContainerContext {
 
     initAccountStore(container.getComponent(XMPPAccountStore.class));
 
-    installPacketExtensionProviders();
+    installExtensionElementProviders();
 
     XMPPUtils.setDefaultConnectionService(container.getComponent(XMPPConnectionService.class));
 

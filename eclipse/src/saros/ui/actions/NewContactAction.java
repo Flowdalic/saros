@@ -22,7 +22,7 @@ public class NewContactAction extends Action implements Disposable {
   private final IConnectionListener connectionListener =
       new IConnectionListener() {
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState state) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState state) {
           setEnabled(sarosNet.isConnected());
         }
       };

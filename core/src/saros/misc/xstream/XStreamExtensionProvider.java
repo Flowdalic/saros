@@ -32,22 +32,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.filter.PacketExtensionFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.ExtensionElementFilter;
+import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.provider.IQProvider;
-import org.jivesoftware.smack.provider.PacketExtensionProvider;
+import org.jivesoftware.smack.provider.ExtensionElementProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.xmlpull.v1.XmlPullParser;
 
 /**
  * Flexible extension provider using XStream to serialize arbitrary data objects.
  *
- * <p>Supports PacketExtension and IQPackets
+ * <p>Supports ExtensionElement and IQPackets
  */
-public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQProvider {
+public class XStreamExtensionProvider<T> implements ExtensionElementProvider, IQProvider {
 
   private static final Logger LOG = Logger.getLogger(XStreamExtensionProvider.class);
 
@@ -99,9 +99,9 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
 
     xstream.registerConverter(BooleanConverter.BINARY);
     xstream.registerConverter(new UrlEncodingStringConverter());
-    xstream.processAnnotations(XStreamPacketExtension.class);
+    xstream.processAnnotations(XStreamExtensionElement.class);
     xstream.processAnnotations(classes);
-    xstream.alias(elementName, XStreamPacketExtension.class);
+    xstream.alias(elementName, XStreamExtensionElement.class);
 
     ProviderManager providerManager = ProviderManager.getInstance();
     providerManager.addExtensionProvider(getElementName(), getNamespace(), this);
@@ -196,9 +196,9 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
 
   public static class XStreamIQPacket<T> extends IQ {
 
-    protected XStreamPacketExtension<T> child;
+    protected XStreamExtensionElement<T> child;
 
-    protected XStreamIQPacket(XStreamPacketExtension<T> child) {
+    protected XStreamIQPacket(XStreamExtensionElement<T> child) {
       if (child == null) throw new IllegalArgumentException("Child must be given!");
       this.child = child;
     }
@@ -210,7 +210,7 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
 
     @Override
     public String getChildElementXML() {
-      return child.toXML();
+      return child.toXML(String enclosingNamespace);
     }
 
     public T getPayload() {
@@ -218,7 +218,7 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
     }
   }
 
-  public static class XStreamPacketExtension<T> implements PacketExtension {
+  public static class XStreamExtensionElement<T> implements ExtensionElement {
 
     /** Necessary for Smack */
     @XStreamAsAttribute protected String xmlns;
@@ -227,13 +227,13 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
 
     @XStreamOmitField protected XStreamExtensionProvider<T> provider;
 
-    protected XStreamPacketExtension(XStreamExtensionProvider<T> ourProvider, T payload) {
+    protected XStreamExtensionElement(XStreamExtensionProvider<T> ourProvider, T payload) {
       this.xmlns = ourProvider.getNamespace();
       this.payload = payload;
       this.provider = ourProvider;
     }
 
-    /** Returns whether this XStreamPacketExtension is compatible with the given provider */
+    /** Returns whether this XStreamExtensionElement is compatible with the given provider */
     public boolean accept(XStreamExtensionProvider<?> provider) {
       return Objects.equals(getElementName(), provider.getElementName())
           && Objects.equals(getNamespace(), provider.getNamespace());
@@ -254,7 +254,7 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
     }
 
     @Override
-    public String toXML() {
+    public String toXML(String enclosingNamespace) {
       StringWriter writer = new StringWriter(512);
       provider.xstream.marshal(this, new CompactWriter(writer));
       return writer.toString();
@@ -262,11 +262,11 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
   }
 
   /**
-   * PacketFilter for Packets which contain a PacketExtension matching the {@link
+   * StanzaFilter for Packets which contain a ExtensionElement matching the {@link
    * XStreamExtensionProvider#elementName} and {@link XStreamExtensionProvider#namespace}.
    */
-  public PacketFilter getPacketFilter() {
-    return new PacketExtensionFilter(getElementName(), getNamespace());
+  public StanzaFilter getStanzaFilter() {
+    return new ExtensionElementFilter(getElementName(), getNamespace());
   }
 
   public String getNamespace() {
@@ -277,10 +277,10 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
     return elementName;
   }
 
-  public PacketFilter getIQFilter() {
-    return new PacketFilter() {
+  public StanzaFilter getIQFilter() {
+    return new StanzaFilter() {
       @Override
-      public boolean accept(Packet packet) {
+      public boolean accept(Stanza packet) {
         if (!(packet instanceof XStreamIQPacket<?>)) return false;
 
         return ((XStreamIQPacket<?>) packet).accept(XStreamExtensionProvider.this);
@@ -290,30 +290,30 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
 
   @Override
   @SuppressWarnings("unchecked")
-  public PacketExtension parseExtension(XmlPullParser parser) {
+  public ExtensionElement parseExtension(XmlPullParser parser) {
     try {
-      XStreamPacketExtension<T> result =
-          (XStreamPacketExtension<T>) xstream.unmarshal(new XppReader(parser));
+      XStreamExtensionElement<T> result =
+          (XStreamExtensionElement<T>) xstream.unmarshal(new XppReader(parser));
       result.provider = this;
       return result;
     } catch (RuntimeException e) {
       LOG.error("unmarshalling data failed", e);
-      return new DropSilentlyPacketExtension();
+      return new DropSilentlyExtensionElement();
     }
   }
 
   /**
    * Returns the payload transported in this packet for this extensions provider.
    *
-   * <p>This method can handle IQ and PacketExtensions used for transferring payloads.
+   * <p>This method can handle IQ and ExtensionElements used for transferring payloads.
    *
    * <p>If the packet contains no matching data (or if the packet is null), null is returned.
    *
-   * @throws ClassCastException if somebody has registered a PacketExtension under our {@link
+   * @throws ClassCastException if somebody has registered a ExtensionElement under our {@link
    *     XStreamExtensionProvider#elementName}
    */
   @SuppressWarnings("unchecked")
-  public T getPayload(Packet packet) {
+  public T getPayload(Stanza packet) {
 
     if (packet == null) return null;
 
@@ -327,13 +327,13 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
   }
 
   @SuppressWarnings("unchecked")
-  public T getPayload(PacketExtension extension) {
+  public T getPayload(ExtensionElement extension) {
 
     if (extension == null) return null;
 
-    if (extension instanceof XStreamPacketExtension<?>
-        && ((XStreamPacketExtension<?>) extension).accept(this)) {
-      return ((XStreamPacketExtension<T>) extension).getPayload();
+    if (extension instanceof XStreamExtensionElement<?>
+        && ((XStreamExtensionElement<?>) extension).accept(this)) {
+      return ((XStreamExtensionElement<T>) extension).getPayload();
     }
     return null;
   }
@@ -341,14 +341,14 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
   @SuppressWarnings("unchecked")
   public T parseString(String string) throws IOException {
     try {
-      return ((XStreamPacketExtension<T>) xstream.fromXML(string)).getPayload();
+      return ((XStreamExtensionElement<T>) xstream.fromXML(string)).getPayload();
     } catch (Exception e) {
       throw new IOException(e);
     }
   }
 
-  public XStreamPacketExtension<T> create(T t) {
-    return new XStreamPacketExtension<T>(this, t);
+  public XStreamExtensionElement<T> create(T t) {
+    return new XStreamExtensionElement<T>(this, t);
   }
 
   public IQ createIQ(T t) {
@@ -359,8 +359,8 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
   @SuppressWarnings("unchecked")
   public IQ parseIQ(XmlPullParser parser) throws Exception {
     try {
-      XStreamPacketExtension<T> result =
-          (XStreamPacketExtension<T>) xstream.unmarshal(new XppReader(parser));
+      XStreamExtensionElement<T> result =
+          (XStreamExtensionElement<T>) xstream.unmarshal(new XppReader(parser));
       result.provider = this;
       return new XStreamIQPacket<T>(result);
     } catch (RuntimeException e) {
@@ -369,7 +369,7 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
     }
   }
 
-  private static class DropSilentlyPacketExtension implements PacketExtension {
+  private static class DropSilentlyExtensionElement implements ExtensionElement {
 
     @Override
     public String getElementName() {
@@ -382,7 +382,7 @@ public class XStreamExtensionProvider<T> implements PacketExtensionProvider, IQP
     }
 
     @Override
-    public String toXML() {
+    public String toXML(String enclosingNamespace) {
       StringBuilder buf = new StringBuilder();
       buf.append("<")
           .append(getElementName())

@@ -20,11 +20,11 @@ public class ConnectingFailureHandler implements IConnectingFailureCallback {
 
   private static final Logger log = Logger.getLogger(ConnectingFailureHandler.class);
 
-  private final ConnectionHandler connectionHandler;
+  private final XMPPConnectionHandler connectionHandler;
 
   private boolean isHandling;
 
-  public ConnectingFailureHandler(final ConnectionHandler connectionHandler) {
+  public ConnectingFailureHandler(final XMPPConnectionHandler connectionHandler) {
     this.connectionHandler = connectionHandler;
     this.connectionHandler.setCallback(this);
   }

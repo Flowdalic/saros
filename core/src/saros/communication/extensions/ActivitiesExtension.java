@@ -23,7 +23,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import java.util.List;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import saros.activities.ChangeColorActivity;
 import saros.activities.ChecksumActivity;
 import saros.activities.ChecksumErrorActivity;
@@ -54,7 +54,7 @@ import saros.net.xmpp.JID;
 import saros.session.User;
 
 @XStreamAlias("ADOS")
-public class ActivitiesExtension extends SarosSessionPacketExtension {
+public class ActivitiesExtension extends SarosSessionExtensionElement {
 
   public static final Provider PROVIDER = new Provider();
 
@@ -65,7 +65,7 @@ public class ActivitiesExtension extends SarosSessionPacketExtension {
   private final int sequenceNumber;
 
   /**
-   * Creates an object that can be transformed into a {@linkplain PacketExtension} using the
+   * Creates an object that can be transformed into a {@linkplain ExtensionElement} using the
    * provider of this extension. All object parameters <b>must not be <code>null</code></b>. @Note
    * This constructor does not check for correctness of the input parameters.
    *
@@ -117,7 +117,7 @@ public class ActivitiesExtension extends SarosSessionPacketExtension {
    */
 
   /** */
-  public static class Provider extends SarosSessionPacketExtension.Provider<ActivitiesExtension> {
+  public static class Provider extends SarosSessionExtensionElement.Provider<ActivitiesExtension> {
     private Provider() {
       super(
           "ados",

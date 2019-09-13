@@ -41,7 +41,7 @@ public class ChangeXMPPAccountAction extends Action implements IMenuCreator, Dis
 
   @Inject private XMPPAccountStore accountService;
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   @Inject private ISarosSessionManager sarosSessionManager;
 
@@ -207,7 +207,7 @@ public class ChangeXMPPAccountAction extends Action implements IMenuCreator, Dis
     item.fill(parent, -1);
   }
 
-  private void updateStatus(ConnectionState state) {
+  private void updateStatus(XMPPConnectionState state) {
     try {
       switch (state) {
         case CONNECTED:

@@ -3,10 +3,10 @@ package saros.communication.extensions;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import org.jivesoftware.smack.filter.AndFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 
-public abstract class InvitationExtension extends SarosPacketExtension {
+public abstract class InvitationExtension extends SarosExtensionElement {
 
   @XStreamAlias("nid")
   @XStreamAsAttribute
@@ -21,19 +21,19 @@ public abstract class InvitationExtension extends SarosPacketExtension {
   }
 
   public abstract static class Provider<T extends InvitationExtension>
-      extends SarosPacketExtension.Provider<T> {
+      extends SarosExtensionElement.Provider<T> {
 
     public Provider(String elementName, Class<?>... classes) {
       super(elementName, classes);
     }
 
-    public PacketFilter getPacketFilter(final String invitationID) {
+    public StanzaFilter getStanzaFilter(final String invitationID) {
 
       return new AndFilter(
-          super.getPacketFilter(),
-          new PacketFilter() {
+          super.getStanzaFilter(),
+          new StanzaFilter() {
             @Override
-            public boolean accept(Packet packet) {
+            public boolean accept(Stanza packet) {
               InvitationExtension extension = getPayload(packet);
 
               if (extension == null) return false;

@@ -3,7 +3,7 @@ package saros.negotiation;
 import java.io.IOException;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.ConnectionEstablishedExtension;
 import saros.communication.extensions.InvitationAcceptedExtension;
 import saros.communication.extensions.InvitationAcknowledgedExtension;
@@ -18,7 +18,7 @@ import saros.negotiation.hooks.SessionNegotiationHookManager;
 import saros.net.IConnectionManager;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.preferences.IPreferenceStore;
 import saros.preferences.PreferenceStore;
@@ -37,8 +37,8 @@ public class IncomingSessionNegotiation extends SessionNegotiation {
 
   private boolean running;
 
-  private PacketCollector invitationDataExchangeCollector;
-  private PacketCollector invitationAcknowledgedCollector;
+  private StanzaCollector invitationDataExchangeCollector;
+  private StanzaCollector invitationAcknowledgedCollector;
 
   private final IConnectionManager connectionManager;
 
@@ -192,17 +192,17 @@ public class IncomingSessionNegotiation extends SessionNegotiation {
   private void sendConnectionEstablished() {
     LOG.debug(this + " : sending connection established confirmation");
 
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         getPeer(),
-        ConnectionEstablishedExtension.PROVIDER.create(
-            new ConnectionEstablishedExtension(getID())));
+        XMPPConnectionEstablishedExtension.PROVIDER.create(
+            new XMPPConnectionEstablishedExtension(getID())));
   }
 
   /** Informs the session host that the user has accepted the invitation. */
   private void sendInvitationAccepted() {
     LOG.debug(this + " : sending invitation accepted confirmation");
 
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         getPeer(),
         InvitationAcceptedExtension.PROVIDER.create(new InvitationAcceptedExtension(getID())));
   }
@@ -232,7 +232,7 @@ public class IncomingSessionNegotiation extends SessionNegotiation {
     LOG.debug(this + " : sending session negotiation data");
 
     monitor.setTaskName("Sending session configuration data...");
-    transmitter.sendPacketExtension(
+    transmitter.sendExtensionElement(
         getPeer(), InvitationParameterExchangeExtension.PROVIDER.create(parameters));
   }
 
@@ -247,7 +247,7 @@ public class IncomingSessionNegotiation extends SessionNegotiation {
 
     monitor.setTaskName("Waiting for remote session configuration data...");
 
-    Packet packet = collectPacket(invitationDataExchangeCollector, PACKET_TIMEOUT);
+    Stanza packet = collectPacket(invitationDataExchangeCollector, PACKET_TIMEOUT);
 
     if (packet == null)
       throw new LocalCancellationException(
@@ -337,11 +337,11 @@ public class IncomingSessionNegotiation extends SessionNegotiation {
 
   private void createCollectors() {
     invitationAcknowledgedCollector =
-        receiver.createCollector(InvitationAcknowledgedExtension.PROVIDER.getPacketFilter(getID()));
+        receiver.createCollector(InvitationAcknowledgedExtension.PROVIDER.getStanzaFilter(getID()));
 
     invitationDataExchangeCollector =
         receiver.createCollector(
-            InvitationParameterExchangeExtension.PROVIDER.getPacketFilter(getID()));
+            InvitationParameterExchangeExtension.PROVIDER.getStanzaFilter(getID()));
   }
 
   private void deleteCollectors() {

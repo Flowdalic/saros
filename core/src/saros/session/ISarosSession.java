@@ -54,7 +54,7 @@ public interface ISarosSession {
    * the result to the Network Layer.
    */
 
-  /** Connection identifier to use for sending data. */
+  /** XMPPConnection identifier to use for sending data. */
   public static final String SESSION_CONNECTION_ID = "saros-main-session";
 
   /** @return a list of all users of this session */

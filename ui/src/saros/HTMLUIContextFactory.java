@@ -93,7 +93,7 @@ public class HTMLUIContextFactory extends AbstractContextFactory {
   }
 
   private void createFacades() {
-    add(ConnectionFacade.class, RosterFacade.class);
+    add(XMPPConnectionFacade.class, RosterFacade.class);
   }
 
   /** For UI components that fits no where else. */

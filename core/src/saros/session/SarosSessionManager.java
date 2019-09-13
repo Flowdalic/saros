@@ -98,7 +98,7 @@ public class SarosSessionManager implements ISarosSessionManager {
 
   private final NegotiationFactory negotiationFactory;
 
-  private final NegotiationPacketListener negotiationPacketLister;
+  private final NegotiationStanzaListener negotiationPacketLister;
 
   private final SessionNegotiationHookManager hookManager;
 
@@ -165,7 +165,7 @@ public class SarosSessionManager implements ISarosSessionManager {
   private final IConnectionListener connectionListener =
       new IConnectionListener() {
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState state) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState state) {
 
           if (state == ConnectionState.DISCONNECTING) {
             stopSession(SessionEndReason.CONNECTION_LOST);
@@ -191,7 +191,7 @@ public class SarosSessionManager implements ISarosSessionManager {
     this.hookManager = hookManager;
 
     this.negotiationPacketLister =
-        new NegotiationPacketListener(
+        new NegotiationStanzaListener(
             this, currentSessionNegotiations, currentProjectNegotiations, transmitter, receiver);
   }
 

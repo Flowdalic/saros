@@ -3,7 +3,7 @@ package saros.negotiation;
 import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smackx.filetransfer.FileTransfer;
 import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 import saros.communication.extensions.CancelProjectNegotiationExtension;
@@ -79,7 +79,7 @@ public abstract class ProjectNegotiation extends Negotiation {
 
     this.workspace = workspace;
     this.checksumCache = checksumCache;
-    Connection connection = connectionService.getConnection();
+    XMPPConnection connection = connectionService.getConnection();
 
     if (connection != null) fileTransferManager = new FileTransferManager(connection);
   }
@@ -105,14 +105,14 @@ public abstract class ProjectNegotiation extends Negotiation {
     LOG.debug(
         "notifying remote contact " + getPeer() + " of the local project negotiation cancellation");
 
-    PacketExtension notification =
+    ExtensionElement notification =
         CancelProjectNegotiationExtension.PROVIDER.create(
             new CancelProjectNegotiationExtension(getSessionID(), getID(), cause.getMessage()));
 
     try {
       transmitter.send(ISarosSession.SESSION_CONNECTION_ID, getPeer(), notification);
     } catch (IOException e) {
-      transmitter.sendPacketExtension(getPeer(), notification);
+      transmitter.sendExtensionElement(getPeer(), notification);
     }
   }
 

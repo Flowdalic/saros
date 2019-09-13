@@ -14,13 +14,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.IQ;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.Presence;
-import saros.communication.extensions.SarosPacketExtension;
+import saros.communication.extensions.SarosExtensionElement;
 import saros.misc.xstream.XStreamExtensionProvider;
 import saros.misc.xstream.XStreamExtensionProvider.XStreamIQPacket;
 import saros.net.ConnectionState;
@@ -47,17 +47,17 @@ public class SkypeManager implements IConnectionListener {
   private static final Logger log = Logger.getLogger(SkypeManager.class);
 
   private static final XStreamExtensionProvider<String> skypeProvider =
-      new XStreamExtensionProvider<String>(SarosPacketExtension.EXTENSION_NAMESPACE, "skypeInfo");
+      new XStreamExtensionProvider<String>(SarosExtensionElement.EXTENSION_NAMESPACE, "skypeInfo");
 
   private final Map<JID, String> skypeNames = new ConcurrentHashMap<JID, String>();
 
   private final XMPPConnectionService connectionService;
   private final IPreferenceStore preferenceStore;
 
-  private PacketListener packetListener =
-      new PacketListener() {
+  private StanzaListener packetListener =
+      new StanzaListener() {
         @Override
-        public void processPacket(Packet packet) {
+        public void processStanza(Stanza packet) {
 
           @SuppressWarnings("unchecked")
           final XStreamIQPacket<String> iq = (XStreamIQPacket<String>) packet;
@@ -66,15 +66,15 @@ public class SkypeManager implements IConnectionListener {
 
             final IQ reply = skypeProvider.createIQ(getLocalSkypeName());
             reply.setType(IQ.Type.RESULT);
-            reply.setPacketID(iq.getPacketID());
+            reply.setStanzaId(iq.getStanzaId());
             reply.setTo(iq.getFrom());
 
-            final Connection connection = connectionService.getConnection();
+            final XMPPConnection connection = connectionService.getConnection();
 
             if (connection == null) return;
 
             try {
-              connection.sendPacket(reply);
+              connection.sendStanza(reply);
             } catch (IllegalStateException e) {
               log.warn("failed to send IQ-RESULT reply to contact: " + iq.getFrom(), e);
             }
@@ -151,11 +151,11 @@ public class SkypeManager implements IConnectionListener {
    * <p>TODO SS only send to those, that we know use Saros.
    */
   private void publishSkypeIQ() {
-    final Connection connection = connectionService.getConnection();
+    final XMPPConnection connection = connectionService.getConnection();
 
     if (connection == null) return;
 
-    final Roster roster = connection.getRoster();
+    final Roster roster = Roster.getInstanceFor(connection);
 
     if (roster == null) return;
 
@@ -173,7 +173,7 @@ public class SkypeManager implements IConnectionListener {
         result.setTo(toJid);
 
         try {
-          connection.sendPacket(result);
+          connection.sendStanza(result);
         } catch (IllegalStateException e) {
           log.warn("failed to send IQ-SET request to contact: " + toJid, e);
           // we can abort here as the connection is closed
@@ -183,17 +183,17 @@ public class SkypeManager implements IConnectionListener {
     }
   }
 
-  /** Register a new PacketListener for intercepting SkypeIQ packets. */
+  /** Register a new StanzaListener for intercepting SkypeIQ packets. */
   @Override
-  public void connectionStateChanged(final Connection connection, ConnectionState newState) {
+  public void connectionStateChanged(final XMPPConnection connection, ConnectionState newState) {
     if (newState == ConnectionState.CONNECTING) {
-      connection.addPacketListener(packetListener, skypeProvider.getIQFilter());
-      connection.getRoster().addRosterListener(rosterListener);
+      connection.addStanzaListener(packetListener, skypeProvider.getIQFilter());
+      Roster.getInstanceFor(connection).addRosterListener(rosterListener);
     }
 
     if (newState == ConnectionState.DISCONNECTING) {
-      connection.getRoster().removeRosterListener(rosterListener);
-      connection.removePacketListener(packetListener);
+      Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
+      connection.removeStanzaListener(packetListener);
 
       if (newState == ConnectionState.NOT_CONNECTED) skypeNames.clear();
     }
@@ -211,7 +211,7 @@ public class SkypeManager implements IConnectionListener {
   /** Requests the Skype user name of given user. */
   private void requestSkypeName(JID rqJID) {
 
-    final Connection connection = connectionService.getConnection();
+    final XMPPConnection connection = connectionService.getConnection();
 
     if (connection == null) return;
 
@@ -221,7 +221,7 @@ public class SkypeManager implements IConnectionListener {
     request.setTo(rqJID.toString());
 
     try {
-      connection.sendPacket(request);
+      connection.sendStanza(request);
     } catch (IllegalStateException e) {
       log.warn("failed to send IQ-GET request to contact: " + rqJID, e);
     }

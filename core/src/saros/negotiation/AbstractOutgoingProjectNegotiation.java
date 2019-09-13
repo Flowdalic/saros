@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CancellationException;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.communication.extensions.ProjectNegotiationMissingFilesExtension;
 import saros.communication.extensions.ProjectNegotiationOfferingExtension;
 import saros.communication.extensions.StartActivityQueuingRequest;
@@ -24,7 +24,7 @@ import saros.monitoring.SubProgressMonitor;
 import saros.negotiation.NegotiationTools.CancelOption;
 import saros.net.IReceiver;
 import saros.net.ITransmitter;
-import saros.net.PacketCollector;
+import saros.net.StanzaCollector;
 import saros.net.xmpp.JID;
 import saros.net.xmpp.XMPPConnectionService;
 import saros.session.ISarosSession;
@@ -49,9 +49,9 @@ public abstract class AbstractOutgoingProjectNegotiation extends ProjectNegotiat
 
   protected final IEditorManager editorManager;
 
-  private PacketCollector remoteFileListResponseCollector;
+  private StanzaCollector remoteFileListResponseCollector;
 
-  private PacketCollector startActivityQueuingResponseCollector;
+  private StanzaCollector startActivityQueuingResponseCollector;
 
   private final AdditionalProjectDataFactory additionalProjectDataFactory;
 
@@ -229,7 +229,7 @@ public abstract class AbstractOutgoingProjectNegotiation extends ProjectNegotiat
 
     checkCancellation(CancelOption.NOTIFY_PEER);
 
-    Packet packet = collectPacket(remoteFileListResponseCollector, 60 * 60 * 1000);
+    Stanza packet = collectPacket(remoteFileListResponseCollector, 60 * 60 * 1000);
 
     if (packet == null)
       throw new LocalCancellationException(
@@ -295,12 +295,12 @@ public abstract class AbstractOutgoingProjectNegotiation extends ProjectNegotiat
   protected void createCollectors() {
     remoteFileListResponseCollector =
         receiver.createCollector(
-            ProjectNegotiationMissingFilesExtension.PROVIDER.getPacketFilter(
+            ProjectNegotiationMissingFilesExtension.PROVIDER.getStanzaFilter(
                 getSessionID(), getID()));
 
     startActivityQueuingResponseCollector =
         receiver.createCollector(
-            StartActivityQueuingResponse.PROVIDER.getPacketFilter(getSessionID(), getID()));
+            StartActivityQueuingResponse.PROVIDER.getStanzaFilter(getSessionID(), getID()));
   }
 
   protected void deleteCollectors() {
@@ -395,7 +395,7 @@ public abstract class AbstractOutgoingProjectNegotiation extends ProjectNegotiat
         StartActivityQueuingRequest.PROVIDER.create(
             new StartActivityQueuingRequest(getSessionID(), getID())));
 
-    Packet packet = collectPacket(startActivityQueuingResponseCollector, PACKET_TIMEOUT);
+    Stanza packet = collectPacket(startActivityQueuingResponseCollector, PACKET_TIMEOUT);
 
     if (packet == null)
       throw new LocalCancellationException(

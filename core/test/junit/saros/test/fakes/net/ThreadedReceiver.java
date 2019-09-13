@@ -5,17 +5,17 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import saros.net.IReceiver;
-import saros.net.PacketCollector;
-import saros.net.PacketCollector.CancelHook;
+import saros.net.StanzaCollector;
+import saros.net.StanzaCollector.CancelHook;
 import saros.util.NamedThreadFactory;
 
 public class ThreadedReceiver implements IReceiver {
-  private Map<PacketListener, PacketFilter> listeners =
-      new ConcurrentHashMap<PacketListener, PacketFilter>();
+  private Map<StanzaListener, StanzaFilter> listeners =
+      new ConcurrentHashMap<StanzaListener, StanzaFilter>();
 
   private final ExecutorService executor =
       Executors.newSingleThreadExecutor(new NamedThreadFactory("ThreadedReceiver", false));
@@ -25,23 +25,23 @@ public class ThreadedReceiver implements IReceiver {
   }
 
   @Override
-  public void addPacketListener(PacketListener listener, PacketFilter filter) {
+  public void addStanzaListener(StanzaListener listener, StanzaFilter filter) {
     listeners.put(listener, filter);
   }
 
   @Override
-  public void removePacketListener(PacketListener listener) {
+  public void removeStanzaListener(StanzaListener listener) {
     listeners.remove(listener);
   }
 
   @Override
-  public void processPacket(final Packet packet) {
-    for (Entry<PacketListener, PacketFilter> entry : listeners.entrySet()) {
-      final PacketListener listener = entry.getKey();
-      final PacketFilter filter = entry.getValue();
+  public void processStanza(final Stanza packet) {
+    for (Entry<StanzaListener, StanzaFilter> entry : listeners.entrySet()) {
+      final StanzaListener listener = entry.getKey();
+      final StanzaFilter filter = entry.getValue();
 
       if (filter == null || filter.accept(packet)) {
-        listener.processPacket(packet);
+        listener.processStanza(packet);
 
         executor.submit(
             new Runnable() {
@@ -49,7 +49,7 @@ public class ThreadedReceiver implements IReceiver {
               @Override
               public void run() {
                 try {
-                  listener.processPacket(packet);
+                  listener.processStanza(packet);
                 } catch (Throwable t) {
                   t.printStackTrace();
                 }
@@ -60,17 +60,17 @@ public class ThreadedReceiver implements IReceiver {
   }
 
   @Override
-  public PacketCollector createCollector(PacketFilter filter) {
-    final PacketCollector collector =
-        new PacketCollector(
+  public StanzaCollector createCollector(StanzaFilter filter) {
+    final StanzaCollector collector =
+        new StanzaCollector(
             new CancelHook() {
               @Override
-              public void cancelPacketCollector(PacketCollector collector) {
-                removePacketListener(collector);
+              public void cancelStanzaCollector(StanzaCollector collector) {
+                removeStanzaListener(collector);
               }
             },
             filter);
-    addPacketListener(collector, filter);
+    addStanzaListener(collector, filter);
 
     return collector;
   }

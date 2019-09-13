@@ -34,7 +34,7 @@ public class SarosSourceProvider extends AbstractSourceProvider {
 
   @Inject private ISarosSessionManager sessionManager;
 
-  @Inject private ConnectionHandler connectionHandler;
+  @Inject private XMPPConnectionHandler connectionHandler;
 
   private IConnectionStateListener connectionStateListener =
       new IConnectionStateListener() {

@@ -88,7 +88,7 @@ public class SessionAndContactsTreeView extends JTree implements Disposable {
       new IConnectionListener() {
 
         @Override
-        public void connectionStateChanged(Connection connection, ConnectionState state) {
+        public void connectionStateChanged(XMPPConnection connection, ConnectionState state) {
           renderConnectionState(connection, state);
         }
       };
@@ -123,7 +123,7 @@ public class SessionAndContactsTreeView extends JTree implements Disposable {
     connectionService.removeListener(connectionStateListener);
   }
 
-  private void renderConnectionState(Connection connection, ConnectionState state) {
+  private void renderConnectionState(XMPPConnection connection, ConnectionState state) {
 
     switch (state) {
       case CONNECTED:
@@ -148,7 +148,7 @@ public class SessionAndContactsTreeView extends JTree implements Disposable {
         new Runnable() {
           @Override
           public void run() {
-            Connection connection = connectionService.getConnection();
+            XMPPConnection connection = connectionService.getConnection();
             if (connection == null) return;
 
             String userJID = connection.getUser();

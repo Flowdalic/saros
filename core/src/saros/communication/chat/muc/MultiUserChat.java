@@ -8,15 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smackx.ChatState;
-import org.jivesoftware.smackx.Form;
-import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.FormField;
 import saros.communication.chat.AbstractChat;
 import saros.communication.chat.ChatElement;
 import saros.communication.chat.ChatElement.ChatElementType;
@@ -32,8 +32,8 @@ import saros.net.xmpp.JID;
 public class MultiUserChat extends AbstractChat {
   private final Logger log = Logger.getLogger(MultiUserChat.class);
 
-  /** {@link Connection} this {@link MultiUserChat} uses */
-  private Connection connection;
+  /** {@link XMPPConnection} this {@link MultiUserChat} uses */
+  private XMPPConnection connection;
 
   /** the user of the current connection */
   private JID user;
@@ -110,12 +110,12 @@ public class MultiUserChat extends AbstractChat {
         }
       };
 
-  /** {@link PacketListener} for processing incoming messages */
-  private PacketListener packetListener =
-      new PacketListener() {
+  /** {@link StanzaListener} for processing incoming messages */
+  private StanzaListener packetListener =
+      new StanzaListener() {
         @Override
-        public void processPacket(Packet packet) {
-          log.debug("processPacket called");
+        public void processStanza(Stanza packet) {
+          log.debug("processStanza called");
 
           if (packet instanceof Message) {
             Message message = (Message) packet;
@@ -137,7 +137,7 @@ public class MultiUserChat extends AbstractChat {
    * @param connection
    * @param communicationPreferences
    */
-  public MultiUserChat(Connection connection, MultiUserChatPreferences communicationPreferences) {
+  public MultiUserChat(XMPPConnection connection, MultiUserChatPreferences communicationPreferences) {
     this.connection = connection;
     this.preferences = communicationPreferences;
   }
