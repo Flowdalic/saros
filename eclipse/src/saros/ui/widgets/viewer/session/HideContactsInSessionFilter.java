@@ -2,7 +2,7 @@ package saros.ui.widgets.viewer.session;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import saros.net.xmpp.JID;
 import saros.session.ISarosSession;
 import saros.ui.model.roster.RosterEntryElement;

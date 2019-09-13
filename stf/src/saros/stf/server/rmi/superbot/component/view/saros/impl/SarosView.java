@@ -26,7 +26,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 import org.hamcrest.Matcher;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import saros.editor.FollowModeManager;
 import saros.net.xmpp.JID;
 import saros.session.User;

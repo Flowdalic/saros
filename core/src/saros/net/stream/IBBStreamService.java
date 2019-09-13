@@ -2,7 +2,7 @@ package saros.net.stream;
 
 import java.io.IOException;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.bytestreams.BytestreamListener;
 import org.jivesoftware.smackx.bytestreams.BytestreamManager;

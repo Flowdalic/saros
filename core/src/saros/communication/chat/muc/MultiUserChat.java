@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.Logger;
 import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;

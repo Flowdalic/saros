@@ -13,7 +13,7 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import org.jetbrains.annotations.NotNull;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import saros.SarosPluginContext;
 import saros.account.XMPPAccountStore;
 import saros.intellij.ui.util.IconManager;

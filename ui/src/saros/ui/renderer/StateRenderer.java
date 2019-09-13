@@ -3,8 +3,8 @@ package saros.ui.renderer;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jivesoftware.smack.Connection;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
 import saros.HTMLUIContextFactory;
 import saros.account.IAccountStoreListener;
@@ -25,7 +25,7 @@ import saros.ui.model.State;
  * they can be displayed. This information are encapsulated in {@link saros.ui.model.State}.
  *
  * <p>This class also manages the {@link saros.ui.model.State} via listeners for the {@link
- * saros.net.ConnectionState} and the {@link org.jivesoftware.smack.Roster}, from which the list of
+ * saros.net.ConnectionState} and the {@link org.jivesoftware.smack.roster.Roster}, from which the list of
  * {@link saros.ui.model.Contact}s is created.
  */
 public class StateRenderer extends Renderer {

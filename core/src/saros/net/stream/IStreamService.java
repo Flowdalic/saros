@@ -1,7 +1,7 @@
 package saros.net.stream;
 
 import java.io.IOException;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import saros.net.internal.IByteStreamConnection;
 import saros.net.internal.IByteStreamConnectionListener;
 import saros.net.xmpp.JID;

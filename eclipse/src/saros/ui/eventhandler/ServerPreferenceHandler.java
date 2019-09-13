@@ -1,7 +1,7 @@
 package saros.ui.eventhandler;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import saros.SarosConstants;
 import saros.net.ConnectionState;

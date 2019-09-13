@@ -1,6 +1,6 @@
 package saros.ui.model;
 
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.RosterPacket;
 import saros.net.util.XMPPUtils;

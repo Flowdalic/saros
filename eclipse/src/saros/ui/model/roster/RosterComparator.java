@@ -2,7 +2,7 @@ package saros.ui.model.roster;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import saros.ui.model.ITreeElement;
 
 /**

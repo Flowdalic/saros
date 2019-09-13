@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.junit.Before;
 import org.junit.Test;
 import saros.net.ConnectionState;

@@ -1,9 +1,9 @@
 package saros.ui.model.roster;
 
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterEntry;
-import org.jivesoftware.smack.RosterGroup;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterGroup;
 import saros.net.xmpp.JID;
 
 /**

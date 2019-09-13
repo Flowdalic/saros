@@ -10,7 +10,7 @@ import org.jivesoftware.smack.packet.Packet;
 /**
  * This packet collector is a special version of SMACKs {@link
  * org.jivesoftware.smack.PacketCollector} and does not depend on a {@link
- * org.jivesoftware.smack.Connection} for registration.
+ * org.jivesoftware.smack.XMPPConnection} for registration.
  */
 public class PacketCollector implements PacketListener {
 

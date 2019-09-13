@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 
 /**
  * Implements a {@link ICheckStateProvider} for use with {@link Roster} displaying JFace {@link

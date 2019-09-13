@@ -19,7 +19,7 @@
  */
 package saros.net.xmpp;
 
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import saros.net.ConnectionState;
 
 /**
@@ -37,5 +37,5 @@ public interface IConnectionListener {
    * @param state the new state of the connection. If the state is <code>ERROR</code>, you can use
    *     {@link XMPPConnectionService#getConnectionError()} to get the error message.
    */
-  public void connectionStateChanged(Connection connection, ConnectionState state);
+  public void connectionStateChanged(XMPPConnection connection, ConnectionState state);
 }

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;

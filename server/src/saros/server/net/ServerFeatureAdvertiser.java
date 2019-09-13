@@ -1,7 +1,7 @@
 package saros.server.net;
 
 import org.apache.log4j.Logger;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import saros.SarosConstants;
 import saros.annotations.Component;

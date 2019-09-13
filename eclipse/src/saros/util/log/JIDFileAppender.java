@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.spi.LoggingEvent;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import saros.Saros;
 import saros.SarosPluginContext;
 import saros.annotations.Component;

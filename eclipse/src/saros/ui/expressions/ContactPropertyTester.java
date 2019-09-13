@@ -1,7 +1,7 @@
 package saros.ui.expressions;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import saros.SarosPluginContext;
 import saros.net.xmpp.JID;
 import saros.net.xmpp.XMPPConnectionService;

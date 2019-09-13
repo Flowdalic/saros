@@ -57,7 +57,7 @@ public final class MultiUserChatPreferences {
    *
    * @return the name of the room or <code>null</code> if no service was provided
    * @see org.jivesoftware.smackx.muc
-   *     .MultiUserChat#MultiUserChat(org.jivesoftware.smack.Connection, String)
+   *     .MultiUserChat#MultiUserChat(org.jivesoftware.smack.XMPPConnection, String)
    */
   public String getRoom() {
     return roomAddress;

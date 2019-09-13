@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import saros.net.internal.BinaryChannelConnection;
 import saros.net.internal.IByteStreamConnection;
 import saros.net.internal.IByteStreamConnectionListener;

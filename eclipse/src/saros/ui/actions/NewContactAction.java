@@ -3,7 +3,7 @@ package saros.ui.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
-import org.jivesoftware.smack.Connection;
+import org.jivesoftware.smack.XMPPConnection;
 import saros.SarosPluginContext;
 import saros.net.ConnectionState;
 import saros.net.xmpp.IConnectionListener;

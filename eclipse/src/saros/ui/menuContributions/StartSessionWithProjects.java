@@ -15,7 +15,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.roster.RosterEntry;
 import saros.net.xmpp.JID;
 import saros.ui.Messages;
 import saros.ui.util.CollaborationUtils;

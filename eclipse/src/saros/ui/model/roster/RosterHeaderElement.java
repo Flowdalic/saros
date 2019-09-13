@@ -3,7 +3,7 @@ package saros.ui.model.roster;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.roster.Roster;
 import saros.ui.ImageManager;
 import saros.ui.Messages;
 import saros.ui.model.HeaderElement;
